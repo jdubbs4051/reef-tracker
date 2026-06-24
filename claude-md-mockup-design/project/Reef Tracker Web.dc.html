@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; }
+  .rtscroll::-webkit-scrollbar { width: 8px; height: 8px; }
+  .rtscroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="--app-bg:#f3f7f9;--card:#ffffff;--card2:#eef4f6;--ink:#0d2733;--ink2:#5d7886;--ink3:#9aaeb8;--line:#e6edf0;--teal:#0f9a8b;--tealS:#d8efeb;--coral:#ec6a52;--coralS:#fbe2db;--blue:#2176a8;--blueS:#dcedf6;--amber:#bd8526;--amberS:#f4ead0;min-height:100vh;box-sizing:border-box;padding:40px;background:#cad7dc;display:flex;justify-content:center;align-items:flex-start;font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+
+  <x-import component="ChromeWindow" from="./browser-window.jsx" width="{{ winW }}" height="{{ winH }}" url="reef.local/dashboard" tabs="{{ tabs }}" hint-size="1320px,840px">
+
+    <div style="display:flex;height:100%;background:var(--app-bg);color:var(--ink)">
+
+      <!-- ===== SIDEBAR ===== -->
+      <aside style="width:230px;flex:none;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 14px">
+        <div style="display:flex;align-items:center;gap:10px;padding:4px 8px 22px">
+          <div style="width:34px;height:34px;border-radius:10px;background:var(--teal);display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4c3.6 4.6 5.5 7.4 5.5 10.1a5.5 5.5 0 0 1-11 0C6.5 10.8 8.4 8 12 3.4z"></path></svg></div>
+          <div style="font-size:16px;font-weight:800;letter-spacing:-.01em;color:var(--ink)">Reef Tracker</div>
+        </div>
+
+        <nav style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;background:var(--tealS);color:var(--teal)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg><span style="font-size:13.5px;font-weight:700">Dashboard</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:var(--ink2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4c3.6 4.6 5.5 7.4 5.5 10.1a5.5 5.5 0 0 1-11 0C6.5 10.8 8.4 8 12 3.4z"></path></svg><span style="font-size:13.5px;font-weight:600">Log Reading</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:var(--ink2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v14h16"></path><path d="M8 14l3-3 2 2 4-5"></path></svg><span style="font-size:13.5px;font-weight:600">Parameters</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:var(--ink2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14"></path><path d="M5 12h14"></path><path d="M5 17h9"></path></svg><span style="font-size:13.5px;font-weight:600">Tasks</span><span style="margin-left:auto;font-size:10px;font-weight:800;color:#fff;background:var(--coral);border-radius:999px;padding:2px 7px">2</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:var(--ink2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"></rect><rect x="13" y="4" width="7" height="7" rx="1.5"></rect><rect x="4" y="13" width="7" height="7" rx="1.5"></rect><rect x="13" y="13" width="7" height="7" rx="1.5"></rect></svg><span style="font-size:13.5px;font-weight:600">Livestock</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:var(--ink2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h12a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H5z"></path><path d="M9 8h6M9 12h6"></path></svg><span style="font-size:13.5px;font-weight:600">Journal</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:var(--ink2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"></path><path d="M3 7l9 4 9-4M12 11v10"></path></svg><span style="font-size:13.5px;font-weight:600">Consumables</span></div>
+          <div style="display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:10px;color:var(--ink2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M5 12h14M5 17h14"></path><circle cx="9" cy="7" r="2" fill="var(--card)"></circle><circle cx="15" cy="12" r="2" fill="var(--card)"></circle><circle cx="8" cy="17" r="2" fill="var(--card)"></circle></svg><span style="font-size:13.5px;font-weight:600">Settings</span></div>
+        </nav>
+
+        <div style="margin-top:auto;background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:12px 13px">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)">Current tank</div>
+          <div style="font-size:13px;font-weight:700;color:var(--ink);margin-top:5px;line-height:1.3">Red Sea MAX NANO G2 XL</div>
+          <div style="font-size:11px;color:var(--ink2);margin-top:2px">29 gal · Day 142</div>
+        </div>
+      </aside>
+
+      <!-- ===== MAIN ===== -->
+      <main style="flex:1;display:flex;flex-direction:column;min-width:0">
+
+        <header style="display:flex;align-items:center;justify-content:space-between;padding:18px 26px;border-bottom:1px solid var(--line)">
+          <div>
+            <div style="font-size:20px;font-weight:800;letter-spacing:-.015em;color:var(--ink)">Dashboard</div>
+            <div style="font-size:12.5px;color:var(--ink2);margin-top:2px">Mon, Jun 23 · everything's looking steady</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="display:flex;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px">
+              <button onClick="{{ setLight }}" style="border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 12px;border-radius:7px;{{ lightSeg }}">Light</button>
+              <button onClick="{{ setDark }}" style="border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:6px 12px;border-radius:7px;{{ darkSeg }}">Dark</button>
+            </div>
+            <button style="display:flex;align-items:center;gap:7px;background:var(--teal);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px -6px rgba(15,154,139,.55)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Log reading</button>
+          </div>
+        </header>
+
+        <div class="rtscroll" style="flex:1;overflow-y:auto;padding:22px 26px 30px">
+
+          <!-- KPI ROW -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px">
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:12px;background:var(--tealS);color:var(--teal);display:flex;align-items:center;justify-content:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 5 4-12 2 7h6"></path></svg></div>
+              <div><div style="font-size:11px;font-weight:700;color:var(--ink2)">Tank status</div><div style="font-size:19px;font-weight:800;color:var(--ink);margin-top:2px">Stable</div></div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:12px;background:var(--coralS);color:var(--coral);display:flex;align-items:center;justify-content:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></div>
+              <div><div style="font-size:11px;font-weight:700;color:var(--ink2)">Due today</div><div style="font-size:19px;font-weight:800;color:var(--ink);margin-top:2px">2 tasks</div></div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px">
+              <div style="width:44px;height:44px;border-radius:12px;background:var(--blueS);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"></rect><rect x="13" y="4" width="7" height="7" rx="1.5"></rect><rect x="4" y="13" width="7" height="7" rx="1.5"></rect><rect x="13" y="13" width="7" height="7" rx="1.5"></rect></svg></div>
+              <div><div style="font-size:11px;font-weight:700;color:var(--ink2)">Livestock</div><div style="font-size:19px;font-weight:800;color:var(--ink);margin-top:2px">11 alive</div></div>
+            </div>
+          </div>
+
+          <!-- MAIN GRID -->
+          <div style="display:grid;grid-template-columns:1.65fr 1fr;gap:16px;align-items:start">
+
+            <!-- LEFT COLUMN -->
+            <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px">
+                <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:14px">Latest readings</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+                  <div style="background:var(--card2);border-radius:12px;padding:11px 13px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Temp</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">77.6<span style="font-size:11px;color:var(--ink3);margin-left:3px">°F</span></div><div style="font-size:10px;color:var(--ink3);margin-top:1px">77–78</div></div>
+                  <div style="background:var(--card2);border-radius:12px;padding:11px 13px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Salinity</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">1.025</div><div style="font-size:10px;color:var(--ink3);margin-top:1px">1.025–1.026</div></div>
+                  <div style="background:var(--card2);border-radius:12px;padding:11px 13px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Alk</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">8.4<span style="font-size:11px;color:var(--ink3);margin-left:3px">dKH</span></div><div style="font-size:10px;color:var(--ink3);margin-top:1px">8–9</div></div>
+                  <div style="background:var(--card2);border-radius:12px;padding:11px 13px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Nitrate</span><span style="width:7px;height:7px;border-radius:50%;background:var(--coral)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">12<span style="font-size:11px;color:var(--ink3);margin-left:3px">ppm</span></div><div style="font-size:10px;color:var(--coral);margin-top:1px">5–10 · high</div></div>
+                  <div style="background:var(--card2);border-radius:12px;padding:11px 13px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Calcium</span><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">418<span style="font-size:11px;color:var(--ink3);margin-left:3px">ppm</span></div><div style="font-size:10px;color:var(--amber);margin-top:1px">420–440 · low</div></div>
+                  <div style="background:var(--card2);border-radius:12px;padding:11px 13px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">pH</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">8.1</div><div style="font-size:10px;color:var(--ink3);margin-top:1px">7.9–8.4</div></div>
+                </div>
+              </div>
+
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px">
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px">
+                  <div><div style="font-size:13px;font-weight:800;color:var(--ink)">Alkalinity</div><div style="font-size:11.5px;color:var(--ink2);margin-top:3px">8-week trend · target band 8.0–9.0 dKH</div></div>
+                  <div style="text-align:right"><div style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:var(--teal);background:var(--tealS);padding:4px 9px;border-radius:7px">Steady · −0.1/wk</div></div>
+                </div>
+                <svg viewBox="0 0 620 170" width="100%" style="display:block">
+                  <rect x="0" y="44" width="620" height="74" fill="var(--tealS)" opacity="0.7"></rect>
+                  <line x1="0" y1="44" x2="620" y2="44" stroke="var(--teal)" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"></line>
+                  <line x1="0" y1="118" x2="620" y2="118" stroke="var(--teal)" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"></line>
+                  <polyline points="20,72 105,82 190,98 275,62 360,90 445,82 530,90 600,90" fill="none" stroke="var(--blue)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                  <circle cx="600" cy="90" r="5" fill="var(--blue)" stroke="var(--card)" stroke-width="2.5"></circle>
+                  <text x="4" y="40" font-family="IBM Plex Mono" font-size="10" fill="var(--ink3)">9.0</text>
+                  <text x="4" y="132" font-family="IBM Plex Mono" font-size="10" fill="var(--ink3)">8.0</text>
+                </svg>
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);font-family:'IBM Plex Mono';margin-top:6px"><span>8 wks ago</span><span>now</span></div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px">
+                <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:13px">What's due</div>
+                <div style="display:flex;flex-direction:column;gap:9px">
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:32px;height:32px;border-radius:9px;background:var(--blueS);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4c3.6 4.6 5.5 7.4 5.5 10.1a5.5 5.5 0 0 1-11 0C6.5 10.8 8.4 8 12 3.4z"></path></svg></div><div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Water change (~3 gal)</div></div><span style="font-size:10px;font-weight:800;color:var(--coral);background:var(--coralS);padding:3px 8px;border-radius:6px">Today</span></div>
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:32px;height:32px;border-radius:9px;background:var(--tealS);color:var(--teal);display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5l-4 9a2 2 0 0 0 2 3h8a2 2 0 0 0 2-3l-4-9V3"></path></svg></div><div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Test Alk / Cal / Mag</div></div><span style="font-size:10px;font-weight:800;color:var(--coral);background:var(--coralS);padding:3px 8px;border-radius:6px">Today</span></div>
+                  <div style="display:flex;align-items:center;gap:11px"><div style="width:32px;height:32px;border-radius:9px;background:var(--card2);color:var(--ink2);display:flex;align-items:center;justify-content:center;flex:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.5 11h-11z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></div><div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Clean skimmer cup</div></div><span style="font-size:10px;font-weight:700;color:var(--ink2);background:var(--card2);padding:3px 8px;border-radius:6px">1d</span></div>
+                </div>
+              </div>
+
+              <div style="background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:16px 17px">
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;color:var(--blue)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-5M12 8h.01"></path></svg><span style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Worth a look</span></div>
+                <div style="font-size:13px;line-height:1.55;color:var(--ink);text-wrap:pretty">Nitrate's crept to 12 — nothing to panic over. Watch it across the next two changes before you touch anything.</div>
+              </div>
+
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px">
+                <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:13px">Recent activity</div>
+                <div style="display:flex;flex-direction:column;gap:13px">
+                  <div style="display:flex;gap:11px"><span style="width:8px;height:8px;border-radius:50%;background:var(--teal);flex:none;margin-top:5px"></span><div><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Added a yellow clown goby</div><div style="font-size:11px;color:var(--ink3);margin-top:1px">Jun 20</div></div></div>
+                  <div style="display:flex;gap:11px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex:none;margin-top:5px"></span><div><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Started running carbon</div><div style="font-size:11px;color:var(--ink3);margin-top:1px">Jun 14</div></div></div>
+                  <div style="display:flex;gap:11px"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none;margin-top:5px"></span><div><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Diatom bloom on sand</div><div style="font-size:11px;color:var(--ink3);margin-top:1px">Jun 8</div></div></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:920},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { dark: this.props.dark ?? false };
+  rootRef = React.createRef();
+
+  lightTokens() {
+    return {
+      '--app-bg':'#f3f7f9','--card':'#ffffff','--card2':'#eef4f6','--ink':'#0d2733',
+      '--ink2':'#5d7886','--ink3':'#9aaeb8','--line':'#e6edf0','--teal':'#0f9a8b',
+      '--tealS':'#d8efeb','--coral':'#ec6a52','--coralS':'#fbe2db','--blue':'#2176a8',
+      '--blueS':'#dcedf6','--amber':'#bd8526','--amberS':'#f4ead0'
+    };
+  }
+  darkTokens() {
+    return {
+      '--app-bg':'#08151c','--card':'#102530','--card2':'#16313d','--ink':'#e9f2f5',
+      '--ink2':'#93acb9','--ink3':'#5f7d8a','--line':'#1f3a47','--teal':'#2cc2ad',
+      '--tealS':'#0f3a37','--coral':'#ff7e66','--coralS':'#3c201c','--blue':'#4ea6d6',
+      '--blueS':'#123141','--amber':'#eab863','--amberS':'#2f2614'
+    };
+  }
+
+  applyTheme() {
+    const el = this.rootRef.current; if (!el) return;
+    const t = this.state.dark ? this.darkTokens() : this.lightTokens();
+    Object.entries(t).forEach(([k,v]) => el.style.setProperty(k,v));
+    el.style.background = this.state.dark ? '#0a161d' : '#cad7dc';
+  }
+
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate(prev) {
+    if (prev.dark !== this.props.dark) this.setState({ dark: this.props.dark });
+    this.applyTheme();
+  }
+
+  renderVals() {
+    const dark = this.state.dark;
+    const active = 'background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(8,22,30,.14)';
+    const idle = 'background:transparent;color:var(--ink2)';
+    return {
+      rootRef: this.rootRef,
+      winW: 1320,
+      winH: 840,
+      tabs: [{ title: 'Reef Tracker · Dashboard' }, { title: 'Red Sea Reefing' }],
+      setLight: () => this.setState({ dark: false }),
+      setDark: () => this.setState({ dark: true }),
+      lightSeg: dark ? idle : active,
+      darkSeg: dark ? active : idle,
+    };
+  }
+}
+</script>
+</body>
+</html>

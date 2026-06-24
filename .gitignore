@@ -1,0 +1,24 @@
+# Secrets / credentials -- never commit these
+elevenlabs API key
+*.key
+.env
+.env.*
+*secret*
+*apikey*
+
+# OS junk
+.DS_Store
+
+# Node
+node_modules/
+frontend/dist/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Runtime data (database + uploaded photos)
+backend/data/reef.db
+backend/data/photos/

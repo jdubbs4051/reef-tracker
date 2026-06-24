@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; }
+  *::-webkit-scrollbar { width: 0; height: 0; }
+  * { scrollbar-width: none; }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="--app-bg:#f3f7f9;--card:#ffffff;--card2:#eef4f6;--ink:#0d2733;--ink2:#5d7886;--ink3:#9aaeb8;--line:#e6edf0;--teal:#0f9a8b;--tealS:#d8efeb;--coral:#ec6a52;--coralS:#fbe2db;--blue:#2176a8;--blueS:#dcedf6;--amber:#bd8526;--amberS:#f4ead0;--bezelBg:#10181d;--bezelPad:11px;--bezelRad:48px;--screenRad:37px;--bezelShadow:0 30px 60px -22px rgba(8,22,30,.5), 0 8px 22px rgba(8,22,30,.18);min-height:100vh;box-sizing:border-box;padding:44px 44px 60px;background:#cad7dc;font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+
+  <header style="max-width:1640px;margin:0 auto 40px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px">
+    <div>
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="width:38px;height:38px;border-radius:11px;background:var(--teal);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(15,154,139,.35)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4c3.6 4.6 5.5 7.4 5.5 10.1a5.5 5.5 0 0 1-11 0C6.5 10.8 8.4 8 12 3.4z"></path></svg></div>
+        <div style="font-size:25px;font-weight:800;letter-spacing:-.02em;color:var(--ink)">Reef Tracker</div>
+      </div>
+      <div style="font-size:13.5px;color:var(--ink2);margin-top:8px;max-width:560px;line-height:1.5">Self-hosted reef tank companion — mobile mockup. 8 screens, logging-first, trends over single readings. Toggle theme &amp; frame below.</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;background:rgba(255,255,255,.5);border:1px solid rgba(13,39,51,.1);border-radius:11px;padding:3px">
+        <button onClick="{{ setLight }}" style="border:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:8px;{{ lightSeg }}">Light</button>
+        <button onClick="{{ setDark }}" style="border:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:8px;{{ darkSeg }}">Dark</button>
+      </div>
+      <button onClick="{{ toggleFrame }}" style="border:1px solid rgba(13,39,51,.12);cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:11px;background:rgba(255,255,255,.5);color:#345060">Frame: {{ frameLabel }}</button>
+    </div>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;gap:38px 34px;justify-content:center;align-items:flex-start;max-width:1640px;margin:0 auto">
+
+    <!-- ============ 01 DASHBOARD ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">01 · Dashboard</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px">
+              <div>
+                <div style="font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Good morning, Jonathan</div>
+                <div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em;margin-top:4px">Red Sea MAX NANO</div>
+                <div style="font-size:12.5px;color:var(--ink2);margin-top:3px">29 gal display · Day 142</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;background:var(--tealS);color:var(--teal);font-size:11px;font-weight:800;padding:6px 10px;border-radius:999px;white-space:nowrap"><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span>Stable</div>
+            </div>
+
+            <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:4px 2px 10px">What's due</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:22px">
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px">
+                <div style="width:34px;height:34px;border-radius:10px;background:var(--blueS);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4c3.6 4.6 5.5 7.4 5.5 10.1a5.5 5.5 0 0 1-11 0C6.5 10.8 8.4 8 12 3.4z"></path></svg></div>
+                <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Water change (~3 gal)</div><div style="font-size:11.5px;color:var(--ink2)">water · weekly</div></div>
+                <span style="font-size:10.5px;font-weight:800;color:var(--coral);background:var(--coralS);padding:4px 9px;border-radius:7px;white-space:nowrap">Today</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px">
+                <div style="width:34px;height:34px;border-radius:10px;background:var(--tealS);color:var(--teal);display:flex;align-items:center;justify-content:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5l-4 9a2 2 0 0 0 2 3h8a2 2 0 0 0 2-3l-4-9V3"></path></svg></div>
+                <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Test Alk / Cal / Mag</div><div style="font-size:11.5px;color:var(--ink2)">testing · weekly</div></div>
+                <span style="font-size:10.5px;font-weight:800;color:var(--coral);background:var(--coralS);padding:4px 9px;border-radius:7px;white-space:nowrap">Today</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px">
+                <div style="width:34px;height:34px;border-radius:10px;background:var(--card2);color:var(--ink2);display:flex;align-items:center;justify-content:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.5 11h-11z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg></div>
+                <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Clean skimmer cup</div><div style="font-size:11.5px;color:var(--ink2)">filtration · weekly</div></div>
+                <span style="font-size:10.5px;font-weight:800;color:var(--ink2);background:var(--card2);padding:4px 9px;border-radius:7px;white-space:nowrap">Tomorrow</span>
+              </div>
+            </div>
+
+            <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:4px 2px 10px">Latest readings</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Temp</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">77.6<span style="font-size:11px;color:var(--ink3);margin-left:3px">°F</span></div><div style="font-size:10px;color:var(--ink3);margin-top:1px">77–78</div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Salinity</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">1.025</div><div style="font-size:10px;color:var(--ink3);margin-top:1px">1.025–1.026</div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Alk</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">8.4<span style="font-size:11px;color:var(--ink3);margin-left:3px">dKH</span></div><div style="font-size:10px;color:var(--ink3);margin-top:1px">8–9</div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Nitrate</span><span style="width:7px;height:7px;border-radius:50%;background:var(--coral)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">12<span style="font-size:11px;color:var(--ink3);margin-left:3px">ppm</span></div><div style="font-size:10px;color:var(--coral);margin-top:1px">5–10 · high</div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">Calcium</span><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">418<span style="font-size:11px;color:var(--ink3);margin-left:3px">ppm</span></div><div style="font-size:10px;color:var(--amber);margin-top:1px">420–440 · low</div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:11px;font-weight:700;color:var(--ink2)">pH</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div><div style="font-family:'IBM Plex Mono';font-size:18px;font-weight:600;color:var(--ink);margin-top:5px">8.1</div><div style="font-size:10px;color:var(--ink3);margin-top:1px">7.9–8.4</div></div>
+            </div>
+
+            <div style="background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:18px">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;color:var(--blue)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 16v-5"></path><path d="M12 8h.01"></path><circle cx="12" cy="12" r="9"></circle></svg><span style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Worth a look</span></div>
+              <div style="font-size:13px;line-height:1.55;color:var(--ink);text-wrap:pretty">Nitrate's crept to 12 — nothing to panic over. Watch it across the next two changes before you touch anything.</div>
+            </div>
+
+            <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:4px 2px 10px">Recent</div>
+            <div style="display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px">
+              <span style="width:9px;height:9px;border-radius:50%;background:var(--teal);flex:none"></span>
+              <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:var(--ink)">Added a yellow clown goby</div><div style="font-size:11.5px;color:var(--ink2)">Journal entry</div></div>
+              <span style="font-size:11px;color:var(--ink3);font-weight:600">3d</span>
+            </div>
+
+          </div>
+          <dc-import name="ReefNav" active="home" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 02 LOG READING ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">02 · Log Reading</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="margin-bottom:16px"><div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em">Log Reading</div><div style="font-size:12.5px;color:var(--ink2);margin-top:3px">Tab through — it remembers your last values.</div></div>
+
+            <button style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin-bottom:18px;cursor:pointer;font-family:inherit"><span style="display:flex;align-items:center;gap:9px;color:var(--ink);font-weight:700;font-size:13.5px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.5"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg>Today · Jun 23</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 12px"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink)">Temperature</div><div style="font-size:10.5px;color:var(--ink3)">°F · last 77.4</div></div><input value="77.6" style="width:74px;text-align:right;font-family:'IBM Plex Mono';font-size:16px;font-weight:600;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:7px 10px"></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 12px"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink)">Salinity</div><div style="font-size:10.5px;color:var(--ink3)">SG · last 1.025</div></div><input value="1.025" style="width:74px;text-align:right;font-family:'IBM Plex Mono';font-size:16px;font-weight:600;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:7px 10px"></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 12px"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink)">pH</div><div style="font-size:10.5px;color:var(--ink3)">— · last 8.0</div></div><input value="8.1" style="width:74px;text-align:right;font-family:'IBM Plex Mono';font-size:16px;font-weight:600;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:7px 10px"></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:2px solid var(--teal);border-radius:13px;padding:9px 12px"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink)">Alkalinity</div><div style="font-size:10.5px;color:var(--ink3)">dKH · last 8.5</div></div><input value="8.4" style="width:74px;text-align:right;font-family:'IBM Plex Mono';font-size:16px;font-weight:600;color:var(--ink);background:var(--tealS);border:1px solid var(--teal);border-radius:9px;padding:7px 10px"></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 12px"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink)">Calcium</div><div style="font-size:10.5px;color:var(--ink3)">ppm · last 422</div></div><input value="418" style="width:74px;text-align:right;font-family:'IBM Plex Mono';font-size:16px;font-weight:600;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:7px 10px"></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:9px 12px"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ink)">Nitrate</div><div style="font-size:10.5px;color:var(--ink3)">ppm · last 9</div></div><input value="12" style="width:74px;text-align:right;font-family:'IBM Plex Mono';font-size:16px;font-weight:600;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:7px 10px"></div>
+            </div>
+
+            <div style="font-size:11.5px;color:var(--ink2);text-align:center;margin:14px 0 16px">+ 2 more parameters below</div>
+            <button style="width:100%;background:var(--teal);color:#fff;border:none;border-radius:13px;padding:15px;font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px -6px rgba(15,154,139,.5)">Save 8 readings</button>
+
+          </div>
+          <dc-import name="ReefNav" active="log" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 03 PARAMETERS / CHARTS ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">03 · Parameters &amp; Charts</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em;margin-bottom:12px">Parameters</div>
+            <div style="display:flex;gap:7px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px">
+              <span style="flex:none;font-size:12px;font-weight:700;color:#fff;background:var(--teal);padding:7px 13px;border-radius:999px">Alkalinity</span>
+              <span style="flex:none;font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:7px 13px;border-radius:999px">Calcium</span>
+              <span style="flex:none;font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:7px 13px;border-radius:999px">Nitrate</span>
+              <span style="flex:none;font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:7px 13px;border-radius:999px">pH</span>
+              <span style="flex:none;font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:7px 13px;border-radius:999px">Temp</span>
+            </div>
+
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 15px 12px;margin-bottom:16px">
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px">
+                <div><div style="display:flex;align-items:baseline;gap:5px"><span style="font-family:'IBM Plex Mono';font-size:32px;font-weight:600;color:var(--ink);line-height:1">8.4</span><span style="font-size:13px;color:var(--ink3);font-weight:600">dKH</span></div><div style="font-size:11.5px;color:var(--ink2);margin-top:4px">Target 8.0–9.0</div></div>
+                <div style="text-align:right"><div style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:var(--teal);background:var(--tealS);padding:4px 8px;border-radius:7px">Steady</div><div style="font-size:11px;color:var(--ink3);margin-top:5px;font-family:'IBM Plex Mono'">−0.1 / wk</div></div>
+              </div>
+              <svg viewBox="0 0 312 150" width="100%" style="display:block">
+                <rect x="0" y="39.8" width="312" height="64.4" fill="var(--tealS)" opacity="0.7"></rect>
+                <line x1="0" y1="39.8" x2="312" y2="39.8" stroke="var(--teal)" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"></line>
+                <line x1="0" y1="104.2" x2="312" y2="104.2" stroke="var(--teal)" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"></line>
+                <polyline points="16,65.6 56,72 96,84.9 136,59.1 176,78.4 216,72 256,78.4 296,78.4" fill="none" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                <circle cx="296" cy="78.4" r="4.5" fill="var(--blue)" stroke="var(--card)" stroke-width="2"></circle>
+                <text x="2" y="36" font-family="IBM Plex Mono" font-size="9" fill="var(--ink3)">9.0</text>
+                <text x="2" y="115" font-family="IBM Plex Mono" font-size="9" fill="var(--ink3)">8.0</text>
+              </svg>
+              <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--ink3);font-family:'IBM Plex Mono';margin-top:4px"><span>8 wks ago</span><span>now</span></div>
+            </div>
+
+            <div style="background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:16px">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;color:var(--blue)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v14h16"></path><path d="M8 14l3-3 2 2 4-5"></path></svg><span style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Consumption</span></div>
+              <div style="font-size:13px;line-height:1.55;color:var(--ink);text-wrap:pretty">Uptake's running ~0.4 dKH/day — typical for your coral load. Keep dosing steady; chase stability, not a perfect number.</div>
+            </div>
+
+            <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:4px 2px 10px">Other parameters</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px"><div style="flex:1;font-size:13px;font-weight:700;color:var(--ink)">Calcium</div><span style="font-family:'IBM Plex Mono';font-size:13px;color:var(--ink2)">418 ppm</span><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px"><div style="flex:1;font-size:13px;font-weight:700;color:var(--ink)">Magnesium</div><span style="font-family:'IBM Plex Mono';font-size:13px;color:var(--ink2)">1320 ppm</span><span style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px"><div style="flex:1;font-size:13px;font-weight:700;color:var(--ink)">Nitrate</div><span style="font-family:'IBM Plex Mono';font-size:13px;color:var(--ink2)">12 ppm</span><span style="width:7px;height:7px;border-radius:50%;background:var(--coral)"></span></div>
+            </div>
+
+          </div>
+          <dc-import name="ReefNav" active="charts" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 04 TASKS ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">04 · Tasks</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em">Tasks</div><span style="font-size:11.5px;font-weight:800;color:var(--coral);background:var(--coralS);padding:5px 10px;border-radius:999px">2 due</span></div>
+            <div style="display:flex;gap:7px;margin-bottom:16px">
+              <span style="font-size:12px;font-weight:700;color:#fff;background:var(--ink);padding:7px 14px;border-radius:999px">All</span>
+              <span style="font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:7px 14px;border-radius:999px">Due</span>
+              <span style="font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:7px 14px;border-radius:999px">This week</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><span style="width:22px;height:22px;border-radius:7px;border:2px solid var(--coral);flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Water change (~3 gal)</div><div style="font-size:11px;color:var(--ink3)">water · weekly</div></div><span style="font-size:10.5px;font-weight:800;color:var(--coral);background:var(--coralS);padding:4px 9px;border-radius:7px">Today</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><span style="width:22px;height:22px;border-radius:7px;border:2px solid var(--coral);flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Test Alk / Cal / Mag</div><div style="font-size:11px;color:var(--ink3)">testing · weekly</div></div><span style="font-size:10.5px;font-weight:800;color:var(--coral);background:var(--coralS);padding:4px 9px;border-radius:7px">Today</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><span style="width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Clean skimmer cup</div><div style="font-size:11px;color:var(--ink3)">filtration · weekly</div></div><span style="font-size:10.5px;font-weight:700;color:var(--ink2);background:var(--card2);padding:4px 9px;border-radius:7px">1d</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><span style="width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Inspect ReefMat advance</div><div style="font-size:11px;color:var(--ink3)">filtration · weekly</div></div><span style="font-size:10.5px;font-weight:700;color:var(--ink2);background:var(--card2);padding:4px 9px;border-radius:7px">2d</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><span style="width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Replace carbon</div><div style="font-size:11px;color:var(--ink3)">media · monthly</div></div><span style="font-size:10.5px;font-weight:700;color:var(--ink2);background:var(--card2);padding:4px 9px;border-radius:7px">9d</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px;opacity:.6"><span style="width:22px;height:22px;border-radius:7px;background:var(--teal);display:flex;align-items:center;justify-content:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"></path></svg></span><div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:line-through">Calibrate refractometer</div><div style="font-size:11px;color:var(--ink3)">testing · monthly</div></div><span style="font-size:10.5px;font-weight:700;color:var(--teal)">Done</span></div>
+            </div>
+
+          </div>
+          <dc-import name="ReefNav" active="tasks" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 05 LIVESTOCK ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">05 · Livestock</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em">Livestock</div><span style="font-size:11.5px;font-weight:700;color:var(--ink2)">11 alive</span></div>
+            <div style="display:flex;gap:7px;overflow-x:auto;margin:0 -16px 16px;padding:0 16px">
+              <span style="flex:none;font-size:12px;font-weight:700;color:#fff;background:var(--ink);padding:6px 13px;border-radius:999px">All</span>
+              <span style="flex:none;font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:6px 13px;border-radius:999px">Fish</span>
+              <span style="flex:none;font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:6px 13px;border-radius:999px">Coral</span>
+              <span style="flex:none;font-size:12px;font-weight:700;color:var(--ink2);background:var(--card);border:1px solid var(--line);padding:6px 13px;border-radius:999px">CUC</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden"><div style="height:84px;background:repeating-linear-gradient(135deg,var(--blueS),var(--blueS) 9px,var(--card2) 9px,var(--card2) 18px);display:flex;align-items:center;justify-content:center"><span style="font-family:'IBM Plex Mono';font-size:8.5px;color:var(--ink3);letter-spacing:.03em">photo</span></div><div style="padding:9px 11px 11px"><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Clown Goby</div><div style="font-size:10px;font-style:italic;color:var(--ink3);margin-top:1px">Gobiodon okinawae</div><div style="display:flex;gap:5px;margin-top:7px"><span style="font-size:9px;font-weight:800;color:var(--teal);background:var(--tealS);padding:3px 7px;border-radius:6px">Alive</span><span style="font-size:9px;font-weight:800;color:var(--amber);background:var(--amberS);padding:3px 7px;border-radius:6px">QT d0</span></div></div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden"><div style="height:84px;background:repeating-linear-gradient(135deg,var(--coralS),var(--coralS) 9px,var(--card2) 9px,var(--card2) 18px);display:flex;align-items:center;justify-content:center"><span style="font-family:'IBM Plex Mono';font-size:8.5px;color:var(--ink3);letter-spacing:.03em">photo</span></div><div style="padding:9px 11px 11px"><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Ocellaris Clown</div><div style="font-size:10px;font-style:italic;color:var(--ink3);margin-top:1px">A. ocellaris</div><div style="display:flex;gap:5px;margin-top:7px"><span style="font-size:9px;font-weight:800;color:var(--teal);background:var(--tealS);padding:3px 7px;border-radius:6px">Alive</span></div></div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden"><div style="height:84px;background:repeating-linear-gradient(135deg,var(--tealS),var(--tealS) 9px,var(--card2) 9px,var(--card2) 18px);display:flex;align-items:center;justify-content:center"><span style="font-family:'IBM Plex Mono';font-size:8.5px;color:var(--ink3);letter-spacing:.03em">photo</span></div><div style="padding:9px 11px 11px"><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Hammer Coral</div><div style="font-size:10px;font-style:italic;color:var(--ink3);margin-top:1px">Euphyllia ancora</div><div style="display:flex;gap:5px;margin-top:7px"><span style="font-size:9px;font-weight:800;color:var(--teal);background:var(--tealS);padding:3px 7px;border-radius:6px">Alive</span></div></div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden"><div style="height:84px;background:repeating-linear-gradient(135deg,var(--card2),var(--card2) 9px,var(--line) 9px,var(--line) 18px);display:flex;align-items:center;justify-content:center"><span style="font-family:'IBM Plex Mono';font-size:8.5px;color:var(--ink3);letter-spacing:.03em">photo</span></div><div style="padding:9px 11px 11px"><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Trochus Snail ×3</div><div style="font-size:10px;font-style:italic;color:var(--ink3);margin-top:1px">Trochus sp.</div><div style="display:flex;gap:5px;margin-top:7px"><span style="font-size:9px;font-weight:800;color:var(--blue);background:var(--blueS);padding:3px 7px;border-radius:6px">CUC</span></div></div></div>
+            </div>
+
+          </div>
+          <dc-import name="ReefNav" active="more" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 06 JOURNAL ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">06 · Journal</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em">Journal</div><button style="width:34px;height:34px;border-radius:10px;background:var(--teal);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px -3px rgba(15,154,139,.5)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button></div>
+
+            <div style="position:relative;padding-left:22px">
+              <div style="position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)"></div>
+
+              <div style="position:relative;margin-bottom:16px"><span style="position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--teal);border:2px solid var(--app-bg)"></span><div style="font-size:10.5px;font-weight:700;color:var(--ink3);font-family:'IBM Plex Mono';margin-bottom:5px">JUN 20</div><div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Added yellow clown goby</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-top:4px;text-wrap:pretty">Tiny, settled into the hammer within minutes. Eating frozen day one — good sign.</div></div></div>
+
+              <div style="position:relative;margin-bottom:16px"><span style="position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid var(--app-bg)"></span><div style="font-size:10.5px;font-weight:700;color:var(--ink3);font-family:'IBM Plex Mono';margin-bottom:5px">JUN 14</div><div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Started running carbon</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-top:4px;text-wrap:pretty">Slight yellow tint to the water. One bag in the AIO, will pull in a month.</div></div></div>
+
+              <div style="position:relative;margin-bottom:16px"><span style="position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--amber);border:2px solid var(--app-bg)"></span><div style="font-size:10.5px;font-weight:700;color:var(--ink3);font-family:'IBM Plex Mono';margin-bottom:5px">JUN 8</div><div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Diatom bloom on sand</div><div style="font-size:12px;color:var(--ink2);line-height:1.5;margin-top:4px;text-wrap:pretty">Brown dusting — textbook for a young tank. Riding it out, no chemicals.</div></div></div>
+
+              <div style="position:relative"><span style="position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--ink3);border:2px solid var(--app-bg)"></span><div style="font-size:10.5px;font-weight:700;color:var(--ink3);font-family:'IBM Plex Mono';margin-bottom:5px">MAY 30</div><div style="background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px 13px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">First water change post-cycle</div></div></div>
+
+            </div>
+
+          </div>
+          <dc-import name="ReefNav" active="more" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+    <!-- ============ 07 CONSUMABLES ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">07 · Consumables</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em">Consumables</div><span style="font-size:11.5px;font-weight:800;color:var(--coral);background:var(--coralS);padding:5px 10px;border-radius:999px">1 to reorder</span></div>
+
+            <div style="background:var(--coralS);border:1px solid var(--coral);border-radius:14px;padding:13px 14px;margin-bottom:16px">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;color:var(--coral)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg><span style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Reorder soon</span></div>
+              <div style="font-size:13px;line-height:1.55;color:var(--ink);text-wrap:pretty">Alk supplement's down to ~10 days at current uptake. Order before you're scraping the bottle.</div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Red Sea Salt</div><span style="font-family:'IBM Plex Mono';font-size:11.5px;color:var(--ink2)">18 / 22 lb</span></div><div style="height:7px;border-radius:4px;background:var(--card2);overflow:hidden"><div style="width:82%;height:100%;background:var(--teal);border-radius:4px"></div></div><div style="font-size:10.5px;color:var(--ink3);margin-top:6px">~3 lb / week · ~6 wks left</div></div>
+              <div style="background:var(--card);border:2px solid var(--coral);border-radius:14px;padding:13px 14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Two-part Alk</div><span style="font-family:'IBM Plex Mono';font-size:11.5px;color:var(--coral);font-weight:600">0.6 L</span></div><div style="height:7px;border-radius:4px;background:var(--card2);overflow:hidden"><div style="width:15%;height:100%;background:var(--coral);border-radius:4px"></div></div><div style="font-size:10.5px;color:var(--coral);margin-top:6px;font-weight:600">~0.06 L / day · ~10 days left</div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Carbon</div><span style="font-family:'IBM Plex Mono';font-size:11.5px;color:var(--amber);font-weight:600">1 refill</span></div><div style="height:7px;border-radius:4px;background:var(--card2);overflow:hidden"><div style="width:33%;height:100%;background:var(--amber);border-radius:4px"></div></div><div style="font-size:10.5px;color:var(--ink3);margin-top:6px">Monthly swap · 1 left</div></div>
+              <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Alk test reagent</div><span style="font-family:'IBM Plex Mono';font-size:11.5px;color:var(--ink2)">12 tests</span></div><div style="height:7px;border-radius:4px;background:var(--card2);overflow:hidden"><div style="width:48%;height:100%;background:var(--teal);border-radius:4px"></div></div><div style="font-size:10.5px;color:var(--ink3);margin-top:6px">~4 tests / week · ~3 wks left</div></div>
+            </div>
+
+          </div>
+          <dc-import name="ReefNav" active="more" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 08 SETTINGS ============ -->
+    <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+      <span style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:var(--ink2);padding-left:4px">08 · Settings</span>
+      <div style="width:max-content;background:var(--bezelBg);padding:var(--bezelPad);border-radius:var(--bezelRad);box-shadow:var(--bezelShadow)">
+        <div style="position:relative;width:360px;height:780px;border-radius:var(--screenRad);overflow:hidden;background:var(--app-bg)">
+          <div style="position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:5"><span style="font-size:13px;font-weight:700;color:var(--ink)">9:41</span><span style="display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:11px;font-weight:700"><span>5G</span><svg width="20" height="12" viewBox="0 0 26 14" fill="currentColor"><rect x="1" y="2.5" width="20" height="9" rx="2.5" stroke="currentColor" stroke-width="1.4" fill="none"></rect><rect x="3" y="4.5" width="14" height="5" rx="1.2"></rect><rect x="23" y="5" width="2.2" height="4" rx="1"></rect></svg></span></div>
+          <div style="position:absolute;top:44px;bottom:62px;left:0;right:0;overflow-y:auto;padding:14px 16px 22px">
+
+            <div style="font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.015em;margin-bottom:16px">Settings</div>
+
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:18px;display:flex;align-items:center;gap:13px">
+              <div style="width:42px;height:42px;border-radius:11px;background:var(--blueS);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M3 11h18" stroke-width="1.4"></path></svg></div>
+              <div style="flex:1"><div style="font-size:14px;font-weight:800;color:var(--ink)">Red Sea MAX NANO G2 XL</div><div style="font-size:11.5px;color:var(--ink2);margin-top:2px">29 gal display · ~4 gal sump · Active</div></div>
+            </div>
+
+            <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:4px 2px 10px">Notifications</div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:18px">
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--line)"><div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Email</div><div style="font-size:11px;color:var(--ink3)">SMTP · jonathan@…</div></div><span style="width:42px;height:25px;border-radius:999px;background:var(--teal);position:relative;flex:none"><span style="position:absolute;top:3px;right:3px;width:19px;height:19px;border-radius:50%;background:#fff"></span></span></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--line)"><div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Push (ntfy)</div><div style="font-size:11px;color:var(--ink3)">reef-tank · self-hosted</div></div><span style="width:42px;height:25px;border-radius:999px;background:var(--teal);position:relative;flex:none"><span style="position:absolute;top:3px;right:3px;width:19px;height:19px;border-radius:50%;background:#fff"></span></span></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 14px"><div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Calendar (iCal)</div><div style="font-size:11px;color:var(--ink3)">/calendar.ics feed</div></div><span style="width:42px;height:25px;border-radius:999px;background:var(--line);position:relative;flex:none"><span style="position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:var(--card)"></span></span></div>
+            </div>
+
+            <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:4px 2px 10px">Configure</div>
+            <div style="background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line)"><span style="font-size:13.5px;font-weight:700;color:var(--ink);flex:1">Parameters &amp; target ranges</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line)"><span style="font-size:13.5px;font-weight:700;color:var(--ink);flex:1">Tanks</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:14px"><span style="font-size:13.5px;font-weight:700;color:var(--ink);flex:1">Backup &amp; data</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg></div>
+            </div>
+
+          </div>
+          <dc-import name="ReefNav" active="more" hint-size="100%,62px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1640,&quot;height&quot;:1020},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showFrame&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { dark: this.props.dark ?? false, frame: this.props.showFrame ?? true };
+  rootRef = React.createRef();
+
+  lightTokens() {
+    return {
+      '--app-bg':'#f3f7f9','--card':'#ffffff','--card2':'#eef4f6','--ink':'#0d2733',
+      '--ink2':'#5d7886','--ink3':'#9aaeb8','--line':'#e6edf0','--teal':'#0f9a8b',
+      '--tealS':'#d8efeb','--coral':'#ec6a52','--coralS':'#fbe2db','--blue':'#2176a8',
+      '--blueS':'#dcedf6','--amber':'#bd8526','--amberS':'#f4ead0'
+    };
+  }
+  darkTokens() {
+    return {
+      '--app-bg':'#08151c','--card':'#102530','--card2':'#16313d','--ink':'#e9f2f5',
+      '--ink2':'#93acb9','--ink3':'#5f7d8a','--line':'#1f3a47','--teal':'#2cc2ad',
+      '--tealS':'#0f3a37','--coral':'#ff7e66','--coralS':'#3c201c','--blue':'#4ea6d6',
+      '--blueS':'#123141','--amber':'#eab863','--amberS':'#2f2614'
+    };
+  }
+
+  applyTheme() {
+    const el = this.rootRef.current; if (!el) return;
+    const dark = this.state.dark, frame = this.state.frame;
+    const t = dark ? this.darkTokens() : this.lightTokens();
+    Object.entries(t).forEach(([k,v]) => el.style.setProperty(k,v));
+    if (frame) {
+      el.style.setProperty('--bezelBg', dark ? '#05121a' : '#10181d');
+      el.style.setProperty('--bezelPad','11px');
+      el.style.setProperty('--bezelRad','48px');
+      el.style.setProperty('--screenRad','37px');
+      el.style.setProperty('--bezelShadow','0 30px 60px -22px rgba(8,22,30,.5), 0 8px 22px rgba(8,22,30,.18)');
+    } else {
+      el.style.setProperty('--bezelBg','transparent');
+      el.style.setProperty('--bezelPad','0px');
+      el.style.setProperty('--bezelRad','30px');
+      el.style.setProperty('--screenRad','30px');
+      el.style.setProperty('--bezelShadow','0 18px 44px -20px rgba(8,22,30,.28)');
+    }
+    el.style.background = dark ? '#0a161d' : '#cad7dc';
+  }
+
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate(prev) {
+    if (prev.dark !== this.props.dark) this.setState({ dark: this.props.dark });
+    if (prev.showFrame !== this.props.showFrame) this.setState({ frame: this.props.showFrame });
+    this.applyTheme();
+  }
+
+  renderVals() {
+    const dark = this.state.dark;
+    const active = 'background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(8,22,30,.14)';
+    const idle = 'background:transparent;color:#456070';
+    return {
+      rootRef: this.rootRef,
+      setLight: () => this.setState({ dark: false }),
+      setDark: () => this.setState({ dark: true }),
+      toggleFrame: () => this.setState(s => ({ frame: !s.frame })),
+      frameLabel: this.state.frame ? 'On' : 'Off',
+      lightSeg: dark ? idle : active,
+      darkSeg: dark ? active : idle,
+    };
+  }
+}
+</script>
+</body>
+</html>

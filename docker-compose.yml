@@ -1,0 +1,27 @@
+# One service + one named volume (REEF_TRACKER_SPEC.md §2).
+# Backup = copy the `reef-data` volume — it holds the SQLite file and /photos.
+services:
+  reef-tracker:
+    build: .
+    image: reef-tracker:latest
+    container_name: reef-tracker
+    ports:
+      - "8000:8000"
+    volumes:
+      - reef-data:/data
+    environment:
+      REEF_DATA_DIR: /data
+      REEF_STATIC_DIR: /app/static
+      # Notifications (all optional — unset channels are skipped). See README.
+      # SMTP_HOST: smtp.example.com
+      # SMTP_TO: you@example.com
+      # SMTP_USER: you@example.com
+      # SMTP_PASS: app-password
+      # NTFY_TOPIC: reef-tank
+      # NTFY_URL: https://ntfy.sh
+      # REEF_BASE_URL: http://reef.local:8000   # for the advertised iCal URL
+      # REEF_CHECK_INTERVAL: "3600"             # due-check interval (seconds)
+    restart: unless-stopped
+
+volumes:
+  reef-data:
