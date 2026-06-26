@@ -1208,6 +1208,77 @@ body {
   cursor: help;
   vertical-align: middle;
 }
+/* Per-row delete sits in the sticky Date column: hidden until the row is hovered,
+   turns coral on hover/focus. Reveals on focus too, so it's keyboard-reachable. */
+.history-table .hist-delete {
+  border: none;
+  background: none;
+  color: var(--ink3);
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 6px 0 0;
+  margin-right: 2px;
+  border-radius: 5px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s ease, color 0.12s ease;
+}
+.history-table tbody tr:hover .hist-delete,
+.history-table .hist-delete:focus-visible {
+  opacity: 1;
+}
+.history-table .hist-delete:hover,
+.history-table .hist-delete:focus-visible {
+  color: var(--coral);
+  outline: none;
+}
+/* Inline cell editing: hint editability on hover, swap to an input in place. */
+.history-table td.hist-editable {
+  cursor: pointer;
+}
+.history-table td.hist-editable:hover {
+  background: var(--card2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+/* Empty cells render a faint dot; on hover they invite a value with a blue "+". */
+.history-table td.hist-empty:hover {
+  box-shadow: inset 0 0 0 1px var(--blue);
+}
+.hist-add-dot::before {
+  content: '·';
+  color: var(--ink3);
+}
+.history-table td.hist-empty:hover .hist-add-dot::before {
+  content: '+';
+  color: var(--blue);
+  font-weight: 700;
+}
+.history-table td.hist-edit-cell {
+  padding: 2px 6px;
+}
+.hist-edit-input {
+  width: 100%;
+  min-width: 56px;
+  box-sizing: border-box;
+  padding: 5px 6px;
+  text-align: right;
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  outline: none;
+}
+/* Hide the number spinners — they crowd the narrow cell. */
+.hist-edit-input::-webkit-outer-spin-button,
+.hist-edit-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.hist-edit-input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
 
 /* ============================================================
    Dashboard widgets (Phase 4.4)

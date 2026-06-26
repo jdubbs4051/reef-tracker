@@ -26,6 +26,9 @@ export const api = {
   latestReadings: (tankId) => req(`/readings/latest?tank_id=${tankId}`),
   listReadings: (tankId) => req(`/readings?tank_id=${tankId}`),
   createReadings: (body) => req('/readings', { method: 'POST', body: JSON.stringify(body) }),
+  updateReading: (id, body) => req(`/readings/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  deleteReadings: (tankId, ids) =>
+    req('/readings', { method: 'DELETE', body: JSON.stringify({ tank_id: tankId, ids }) }),
   series: (tankId, parameterId, weeks = 8) =>
     req(`/readings/series?tank_id=${tankId}&parameter_id=${parameterId}&weeks=${weeks}`),
   seriesAll: (tankId, weeks = 8) => req(`/readings/series-all?tank_id=${tankId}&weeks=${weeks}`),

@@ -45,6 +45,18 @@ class ReadingBatchCreate(BaseModel):
     entries: List[ReadingEntry]
 
 
+class ReadingDelete(BaseModel):
+    """Delete one or more readings by id (e.g. a whole day's row from the table)."""
+    tank_id: int
+    ids: List[int]
+
+
+class ReadingUpdate(BaseModel):
+    """Edit a single previously-logged reading (correct a bad/old value)."""
+    value: Optional[float] = None
+    note: Optional[str] = None
+
+
 class LatestReading(BaseModel):
     parameter_id: int
     value: float

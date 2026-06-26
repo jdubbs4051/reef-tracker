@@ -10,6 +10,8 @@ from ..schemas import (
     LatestReading,
     ParameterSeries,
     ReadingBatchCreate,
+    ReadingDelete,
+    ReadingUpdate,
     SeriesPoint,
 )
 
@@ -37,6 +39,42 @@ def create_readings(body: ReadingBatchCreate, session: Session = Depends(get_ses
     for r in created:
         session.refresh(r)
     return created
+
+
+@router.patch("/{reading_id}", response_model=Reading)
+def update_reading(
+    reading_id: int, body: ReadingUpdate, session: Session = Depends(get_session)
+):
+    """Correct a single previously-logged reading's value (or note)."""
+    reading = session.get(Reading, reading_id)
+    if not reading:
+        raise HTTPException(status_code=404, detail="Reading not found")
+    if body.value is not None:
+        reading.value = body.value
+    if body.note is not None:
+        reading.note = body.note
+    session.add(reading)
+    session.commit()
+    session.refresh(reading)
+    return reading
+
+
+@router.delete("", status_code=204)
+def delete_readings(body: ReadingDelete, session: Session = Depends(get_session)):
+    """Delete readings by id (a whole day's row, or a single bad value).
+
+    Scoped to the given tank so a stray id can't touch another tank's history."""
+    if not body.ids:
+        raise HTTPException(status_code=400, detail="No reading ids provided")
+    rows = session.exec(
+        select(Reading)
+        .where(Reading.tank_id == body.tank_id)
+        .where(Reading.id.in_(body.ids))
+    ).all()
+    for r in rows:
+        session.delete(r)
+    session.commit()
+    return None
 
 
 @router.get("", response_model=list[Reading])
