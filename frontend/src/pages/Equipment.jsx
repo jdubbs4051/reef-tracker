@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Plus } from '../icons.jsx'
 import { useTank } from '../TankContext.jsx'
-import { api, EQUIPMENT_TYPES } from '../api.js'
+import { api, EQUIPMENT_TYPES, EQUIPMENT_INTEGRATIONS } from '../api.js'
+import DeviceCard from '../components/DeviceCard.jsx'
 
-const BLANK = { type: 'Lighting', brand: '', model: '', nickname: '', installed_at: '', notes: '' }
+const BLANK = { type: 'Lighting', brand: '', model: '', nickname: '', installed_at: '', notes: '', host: '', integration: '', viz_enabled: true }
 
 // A piece of gear is "named" by whatever's filled in — nickname wins, else brand+model.
 function titleFor(eq) {
@@ -38,6 +39,8 @@ export default function Equipment() {
   if (error) return <div className="content" style={{ color: 'var(--coral)' }}>Couldn’t reach the API: {error}</div>
 
   const active = list.filter((x) => x.active)
+  // Integrated, active devices get a live-status gauge card up top (plan §4.5/§4.7).
+  const live = active.filter((x) => x.integration)
   // Group by type, preserving the canonical type order.
   const groups = EQUIPMENT_TYPES.map((t) => [t, list.filter((x) => x.type === t)]).filter(([, items]) => items.length)
 
@@ -51,6 +54,17 @@ export default function Equipment() {
           <Plus size={16} s={2.2} /> Add
         </button>
       </div>
+
+      {live.length ? (
+        <div style={{ marginBottom: 22 }}>
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Live status</div>
+          <div className="dev-grid">
+            {live.map((x) => (
+              <DeviceCard key={x.id} eq={x} onEdit={setEditing} />
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {list.length === 0 ? (
         <div style={{ fontSize: 13, color: 'var(--ink3)', padding: '8px 2px' }}>
@@ -113,6 +127,9 @@ function EditEquipment({ tank, item, onClose, onSaved }) {
           installed_at: toDateInput(item.installed_at),
           notes: item.notes || '',
           active: item.active,
+          host: item.host || '',
+          integration: item.integration || '',
+          viz_enabled: item.viz_enabled !== false,
         }
       : { ...BLANK, active: true }
   )
@@ -134,6 +151,9 @@ function EditEquipment({ tank, item, onClose, onSaved }) {
         installed_at: fromDateInput(form.installed_at),
         notes: form.notes,
         active: form.active,
+        integration: form.integration || null,
+        host: form.integration ? form.host.trim() || null : null,
+        viz_enabled: form.viz_enabled,
       }
       let id = item?.id
       if (isEdit) {
@@ -203,6 +223,34 @@ function EditEquipment({ tank, item, onClose, onSaved }) {
           <label className="form-label">Notes</label>
           <textarea className="textarea-input" value={form.notes} onChange={set('notes')} placeholder="Settings, warranty, quirks…" />
         </div>
+        <div className="form-field">
+          <label className="form-label">
+            Live integration <span style={{ color: 'var(--ink3)', fontWeight: 500 }}>(Red Sea ReefBeat)</span>
+          </label>
+          <select className="select-input" value={form.integration} onChange={set('integration')}>
+            {EQUIPMENT_INTEGRATIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {form.integration ? (
+          <>
+            <div className="form-field">
+              <label className="form-label">Device address <span style={{ color: 'var(--ink3)', fontWeight: 500 }}>(IP or hostname on your LAN)</span></label>
+              <input className="text-input" value={form.host} onChange={set('host')} placeholder="e.g. 192.168.1.42" />
+            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--ink2)', marginBottom: 14, cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={form.viz_enabled}
+                onChange={(e) => setForm((f) => ({ ...f, viz_enabled: e.target.checked }))}
+              />
+              Show live status {form.host ? '' : '(add an address to start polling)'}
+            </label>
+          </>
+        ) : null}
+
         <div className="form-field">
           <label className="form-label">Photo</label>
           <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />

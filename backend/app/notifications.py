@@ -130,3 +130,24 @@ def notify_task_due(task_name: str, channels: str) -> None:
         send_email(subject, body)
     if "ntfy" in wanted:
         send_ntfy("Reef Tracker", f"Due: {task_name}")
+
+
+def notify_run_safety(template_name: str, undone_steps: list[str]) -> None:
+    """Nudge that a checklist run is still open with critical steps undone.
+
+    The reef safety guard: e.g. "Heads up — return pump may still be off." Sent to
+    whatever channels are configured (no per-run channel config).
+    """
+    steps = "; ".join(undone_steps)
+    bullets = "\n".join(f"  - {s}" for s in undone_steps)
+    subject = f"Reef Tracker — finish your {template_name}?"
+    body = (
+        f"A '{template_name}' checklist is still open with critical steps unchecked:\n"
+        f"{bullets}\n\n"
+        "Did you turn everything back on? Open Reef Tracker to finish the run."
+    )
+    if email_configured():
+        send_email(subject, body)
+    if ntfy_configured():
+        # Title goes in an HTTP header (latin-1 only) — keep it ASCII; emphasis in the body.
+        send_ntfy("Reef Tracker", f"Still open: {template_name} — undone: {steps}. Turn everything back on?")

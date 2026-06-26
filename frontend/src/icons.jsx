@@ -73,3 +73,12 @@ export const Wide = (p) =>
 export const ChevUp = (p) => base(<path d="M6 15l6-6 6 6" />, { ...p, s: p?.s ?? 2.2 })
 export const ChevDown = (p) => base(<path d="M6 9l6 6 6-6" />, { ...p, s: p?.s ?? 2.2 })
 export const X = (p) => base(<path d="M6 6l12 12M18 6L6 18" />, { ...p, s: p?.s ?? 2.2 })
+export const Clipboard = (p) =>
+  base(
+    <>
+      <rect x="5" y="4" width="14" height="17" rx="2.5" />
+      <path d="M9 4.5a2 2 0 0 1 2-1.5h2a2 2 0 0 1 2 1.5V6H9z" />
+      <path d="M9 11l1.5 1.5L13 10M9 16l1.5 1.5L13 15" />
+    </>,
+    p
+  )

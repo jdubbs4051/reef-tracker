@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from ..database import get_session
-from ..models import Journal, Livestock, Reading, Task, TaskLog
+from ..models import ChecklistRun, ChecklistTemplate, Journal, Livestock, Reading, Task, TaskLog
 from ..schemas import ActivityItem
 
 router = APIRouter(prefix="/api/activity", tags=["activity"])
@@ -65,6 +65,19 @@ def recent_activity(tank_id: int, limit: int = 6, session: Session = Depends(get
     ).all()
     for date_added, name in added:
         items.append(ActivityItem(type="livestock", title=f"Added {name}", at=date_added, color="teal"))
+
+    # Completed checklist runs.
+    runs = session.exec(
+        select(ChecklistRun.completed_at, ChecklistTemplate.name)
+        .join(ChecklistTemplate, ChecklistTemplate.id == ChecklistRun.template_id)
+        .where(ChecklistRun.tank_id == tank_id)
+        .where(ChecklistRun.status == "completed")
+        .where(ChecklistRun.completed_at.is_not(None))
+        .order_by(ChecklistRun.completed_at.desc())
+        .limit(limit)
+    ).all()
+    for completed_at, name in runs:
+        items.append(ActivityItem(type="checklist", title=f"Ran: {name}", at=completed_at, color="blue"))
 
     items.sort(key=lambda i: i.at, reverse=True)
     return items[:limit]

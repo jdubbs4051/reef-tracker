@@ -4,11 +4,22 @@ Values mirror REEF_TRACKER_SPEC.md §5/§6 and the dashboard mockup. Sample read
 (8 weekly points per parameter) are seeded so charts and "latest readings" have
 something to show on first launch.
 """
+import json
 from datetime import timedelta
 
 from sqlmodel import Session, select
 
-from .models import Journal, Livestock, Parameter, Reading, Tank, Task, utcnow
+from .models import (
+    ChecklistStep,
+    ChecklistTemplate,
+    Journal,
+    Livestock,
+    Parameter,
+    Reading,
+    Tank,
+    Task,
+    utcnow,
+)
 from .recurrence import next_due
 
 # (name, unit, target_min, target_max)  — display_order is the list index
@@ -52,6 +63,113 @@ SAMPLE_SERIES = {
     "Calcium": [430, 428, 425, 422, 420, 419, 418, 418],
     "Magnesium": [1340, 1335, 1330, 1325, 1320, 1320, 1318, 1320],
 }
+
+
+# Starter procedures, in the LFS voice (uploads/CLAUDE.md §0). Each is
+# (name, category, description, [step, ...]) where a step is (text, detail) for a
+# plain note, or (text, detail, kind[, config]) for a smart step. `kind` is one of
+# note | wait | input | critical (Phase C); config may reference a parameter by
+# name (resolved to parameter_id at seed time).
+SEED_CHECKLISTS = [
+    (
+        "Water Change (~3 gal)",
+        "water",
+        "Slow and steady. The water change itself is easy — the part people forget is turning the gear back ON at the end.",
+        [
+            ("New saltwater has mixed and matched", "Mixed at least 24h, heated to tank temp, salinity matched to the display. Don't rush this — mismatched water is the whole risk.", "wait", {"hours": 24}),
+            ("Gather supplies", "Bucket, siphon/hose, towel, the pre-mixed saltwater. Lay a towel where you'll set anything wet."),
+            ("Shut off the ATO", "So it doesn't try to top off while the level is down."),
+            ("Shut off return pump + skimmer", "Skimmer will overflow on a changing water level if you leave it running."),
+            ("Drain ~3 gallons", "Siphon from the display, working around the rockwork to lift detritus. Stop at your marked line."),
+            ("Refill with the new saltwater", "Pour slowly against the glass or a rock so you don't blast the sand bed."),
+            ("Turn the return pump back ON", "Check flow returns and the display level looks right.", "critical"),
+            ("Turn the skimmer back ON", "Give it a few minutes — it'll foam over for a bit after a change, that's normal.", "critical"),
+            ("Turn the ATO back ON", "The single most-forgotten step. Confirm it's armed before you walk away.", "critical"),
+            ("Record post-change salinity", "Quick refractometer check once flow's back — logs straight to your readings.", "input", {"target": "reading", "parameter_name": "Salinity"}),
+            ("Final once-over", "Temp, flow, everything running, no leaks. Wipe up and you're done."),
+        ],
+    ),
+    (
+        "Filter Sock / ReefMat Swap",
+        "filtration",
+        "Quick job, but a dirty sock is a nitrate factory — don't let it sit.",
+        [
+            ("Have the clean sock / fresh roll ready", "Rinsed and on hand before you pull the dirty one."),
+            ("Lift out the dirty filter sock", "Expect a little spill — keep a towel under it."),
+            ("Drop in the clean sock", "Seat it fully so water passes through, not around."),
+            ("Confirm water is flowing through, not overflowing", "If it's bypassing, reseat it."),
+            ("Rinse the dirty sock soon", "Cold water, no soap, ever. Or toss it in the wash bag."),
+        ],
+    ),
+    (
+        "Skimmer Cup Clean",
+        "filtration",
+        "A clean cup and neck = a skimmer that actually pulls gunk. Two-minute job.",
+        [
+            ("Lift off the collection cup", "Twist and pull — go slow so you don't slosh skimmate into the sump."),
+            ("Empty and rinse the cup", "Tap water is fine here. A bottle brush gets the film off."),
+            ("Wipe the neck/riser tube", "This is where buildup kills performance — a paper towel down the neck does wonders."),
+            ("Reseat the cup", "Back on firmly so it doesn't pop loose."),
+            ("Re-check the skimmer adjustment", "It'll need a minute to settle back into a steady foam."),
+        ],
+    ),
+    (
+        "Glass / Algae Clean",
+        "maintenance",
+        "Do it before a water change so you can siphon out what you knock loose.",
+        [
+            ("Scrape the glass", "Magnet cleaner or scraper. Keep the blade off the sand — a grain between blade and glass scratches."),
+            ("Spot-clean rockwork if needed", "A toothbrush over stubborn algae, then let the flow carry it off."),
+            ("Let detritus settle, then siphon", "Pairs perfectly with a water change — siphon the loosened gunk out."),
+            ("Wipe the rim and lid", "Salt creep and dust off the edges keeps things tidy and bright."),
+        ],
+    ),
+    (
+        "New Coral Acclimation",
+        "livestock",
+        "Patience here pays off for years. Light and flow shock kill more new corals than anything in the bag.",
+        [
+            ("Float the bag to match temperature", "15–20 minutes, lights off or dimmed."),
+            ("Drip or scoop acclimate to your water", "Especially for sensitive corals — match salinity slowly over ~30 min."),
+            ("Dip for pests", "A coral dip catches hitchhikers before they reach your tank. Cheap insurance."),
+            ("Place low and in modest flow first", "Let it adjust before moving it up into more light over the coming weeks."),
+            ("Note it in the Journal", "Date, source, where you placed it — future-you will want the record."),
+        ],
+    ),
+]
+
+
+def seed_checklists_if_empty(session: Session) -> None:
+    """Seed starter procedures for the existing tank — guarded like seed_if_empty."""
+    if session.exec(select(ChecklistTemplate)).first():
+        return
+    tank = session.exec(select(Tank)).first()
+    if not tank:
+        return  # nothing to attach them to yet
+
+    # For resolving input-step config that references a parameter by name.
+    params_by_name = {
+        p.name: p for p in session.exec(select(Parameter).where(Parameter.tank_id == tank.id)).all()
+    }
+
+    for name, category, description, steps in SEED_CHECKLISTS:
+        t = ChecklistTemplate(tank_id=tank.id, name=name, category=category, description=description)
+        session.add(t)
+        session.commit()
+        session.refresh(t)
+        for i, step in enumerate(steps):
+            text, detail = step[0], step[1]
+            kind = step[2] if len(step) > 2 else "note"
+            config = dict(step[3]) if len(step) > 3 else {}
+            # Resolve a parameter reference to its id for this tank.
+            pname = config.pop("parameter_name", None)
+            if pname and pname in params_by_name:
+                config["parameter_id"] = params_by_name[pname].id
+            session.add(ChecklistStep(
+                template_id=t.id, position=i, text=text, detail=detail,
+                kind=kind, config=json.dumps(config),
+            ))
+    session.commit()
 
 
 def seed_if_empty(session: Session) -> None:

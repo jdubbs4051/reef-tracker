@@ -41,6 +41,7 @@ def create_task(body: TaskCreate, session: Session = Depends(get_session)):
         recurrence_rule=body.recurrence_rule,
         notify_channels=body.notify_channels,
         next_due_at=due,
+        checklist_template_id=body.checklist_template_id,
     )
     session.add(task)
     session.commit()

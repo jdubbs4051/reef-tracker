@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Pulse, Clock, Drop, Info, Plus, ChevUp, ChevDown, X, Wide } from '../icons.jsx'
+import { Pulse, Clock, Drop, Info, Plus, ChevUp, ChevDown, X, Wide, Clipboard } from '../icons.jsx'
 import { Icon } from '../iconMap.jsx'
 import TrendChart from '../components/TrendChart.jsx'
 import TaskCalendar from '../components/TaskCalendar.jsx'
+import DeviceCard from '../components/DeviceCard.jsx'
+import { criticalUndone } from './Checklists.jsx'
 import { useTank } from '../TankContext.jsx'
 import { api, fmt, rangeText, statusFor, dueInfo, agoLabel, CATEGORY_ICON } from '../api.js'
 
@@ -27,11 +29,13 @@ const WIDGET_META = {
   calendar: 'Task calendar',
   insight: 'Insight preview',
   activity: 'Recent activity',
+  checklists: 'Checklists',
+  'equipment-status': 'Equipment status',
 }
 
 // Widgets that read better across the full two-column width by default. Anything
 // not listed starts one column wide; the user can toggle either way in edit mode.
-const WIDE_BY_DEFAULT = new Set(['latest-readings', 'calendar', 'activity'])
+const WIDE_BY_DEFAULT = new Set(['latest-readings', 'calendar', 'activity', 'equipment-status'])
 const spanOf = (w) => w.options?.span ?? (WIDE_BY_DEFAULT.has(w.type) ? 2 : 1)
 
 const newId = () =>
@@ -264,7 +268,67 @@ function ActivityWidget({ activity }) {
   )
 }
 
-export default function Dashboard() {
+function ChecklistsWidget({ templates, runs, onLaunch, onResume }) {
+  const warnings = criticalUndone(runs)
+  return (
+    <div className="card">
+      <div className="card-title">Checklists</div>
+      {warnings.map(({ run: r, steps }) => (
+        <button key={`w-${r.id}`} className="cl-w-warn" onClick={() => onResume(r.id)}>
+          <span className="cl-safety-icon">⚠</span>
+          <span style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
+            <strong>{r.template_name}</strong>: {steps.join(', ')} still unchecked — turn back on?
+          </span>
+        </button>
+      ))}
+      {runs.length ? (
+        <div className="cl-w-resume">
+          {runs.map((r) => (
+            <button key={r.id} className="cl-w-resume-row" onClick={() => onResume(r.id)}>
+              <Clipboard size={14} />
+              <span style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>{r.template_name}</span>
+              <span className="tag" style={{ color: 'var(--blue)', background: 'var(--blueS)' }}>resume</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <div className="cl-w-launch">
+        {templates.length ? (
+          templates.map((t) => (
+            <button key={t.id} className="pill-btn" onClick={() => onLaunch(t.id)} title={`Start ${t.name}`}>
+              {t.name}
+            </button>
+          ))
+        ) : (
+          <div style={{ fontSize: 12.5, color: 'var(--ink3)' }}>No procedures yet — build one on the Checklists page.</div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function EquipmentStatusWidget({ equipment, onNavigate }) {
+  // Live, viz-enabled, integrated devices only — the strip is a glance, not a list.
+  const live = equipment.filter((e) => e.active && e.integration && e.viz_enabled)
+  return (
+    <div className="card">
+      <div className="card-title">Equipment status</div>
+      {live.length ? (
+        <div className="dev-strip">
+          {live.map((e) => (
+            <DeviceCard key={e.id} eq={e} compact onClick={() => onNavigate?.('equipment')} />
+          ))}
+        </div>
+      ) : (
+        <div style={{ fontSize: 12.5, color: 'var(--ink3)' }}>
+          No live devices — add a Red Sea integration on the Equipment page.
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function Dashboard({ onNavigate }) {
   const { tank, parameters, tasks, loading, error } = useTank()
   const [latest, setLatest] = useState({}) // parameter_id -> value
   const [lastLogged, setLastLogged] = useState(null)
@@ -273,6 +337,9 @@ export default function Dashboard() {
   const [widgets, setWidgets] = useState(null) // null = layout not loaded yet
   const [editing, setEditing] = useState(false)
   const [saveError, setSaveError] = useState(null)
+  const [clTemplates, setClTemplates] = useState([]) // checklist templates (for the widget)
+  const [clRuns, setClRuns] = useState([]) // in-progress checklist runs
+  const [equipment, setEquipment] = useState([]) // for the equipment-status widget
 
   const byName = (name) => parameters.find((p) => p.name === name)
 
@@ -280,11 +347,14 @@ export default function Dashboard() {
     if (!tank) return
     let cancelled = false
     ;(async () => {
-      const [rows, acts, series, layout] = await Promise.all([
+      const [rows, acts, series, layout, clT, clR, equip] = await Promise.all([
         api.latestReadings(tank.id),
         api.activity(tank.id),
         api.seriesAll(tank.id),
         api.getDashboardLayout(tank.id),
+        api.listChecklists(tank.id),
+        api.listRuns(tank.id, 'in_progress'),
+        api.listEquipment(tank.id),
       ])
       if (cancelled) return
       setLatest(Object.fromEntries(rows.map((r) => [r.parameter_id, r.value])))
@@ -293,11 +363,25 @@ export default function Dashboard() {
       setActivity(acts)
       setAllSeries(series)
       setWidgets(layout.widgets)
+      setClTemplates(clT)
+      setClRuns(clR)
+      setEquipment(equip)
     })()
     return () => {
       cancelled = true
     }
   }, [tank])
+
+  // Start a procedure from the dashboard, then jump to its run on the Checklists page.
+  const launchChecklist = async (templateId) => {
+    try {
+      const run = await api.startRun(templateId)
+      onNavigate?.('checklists', { runId: run.id })
+    } catch (e) {
+      setSaveError(e.message)
+    }
+  }
+  const resumeChecklist = (runId) => onNavigate?.('checklists', { runId })
 
   // Apply a layout change locally and persist it. Fail loudly per house style.
   const persist = useCallback(
@@ -372,6 +456,17 @@ export default function Dashboard() {
         return <InsightWidget insight={insight} />
       case 'activity':
         return <ActivityWidget activity={activity} />
+      case 'checklists':
+        return (
+          <ChecklistsWidget
+            templates={clTemplates}
+            runs={clRuns}
+            onLaunch={launchChecklist}
+            onResume={resumeChecklist}
+          />
+        )
+      case 'equipment-status':
+        return <EquipmentStatusWidget equipment={equipment} onNavigate={onNavigate} />
       default:
         return (
           <div className="card" style={{ fontSize: 12.5, color: 'var(--ink3)' }}>

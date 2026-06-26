@@ -71,6 +71,11 @@ class Task(SQLModel, table=True):
     notify_channels: str = ""  # CSV: "email,ntfy"
     last_notified_at: Optional[datetime] = None  # set by the scheduler; once per due cycle
     active: bool = True
+    # Optional link to a procedure: a due task can launch its checklist (Phase B).
+    # Added to the existing tasks table by migrations.py (create_all won't ALTER it).
+    checklist_template_id: Optional[int] = Field(
+        default=None, foreign_key="checklist_templates.id"
+    )
 
 
 class TaskLog(SQLModel, table=True):
@@ -105,6 +110,13 @@ class Equipment(SQLModel, table=True):
     installed_at: Optional[datetime] = None
     notes: str = ""
     active: bool = True
+    # Red Sea ReefBeat integration (EQUIPMENT_INTEGRATION_PLAN §4.1) — additive,
+    # nullable. Added to the existing equipment table by migrations.py.
+    host: Optional[str] = None  # device IP / hostname on the LAN
+    integration: Optional[str] = None  # see schemas.EQUIPMENT_INTEGRATIONS (null = static gear)
+    viz_enabled: bool = True  # show/poll the live-status card (the §4.6 toggle)
+    last_seen: Optional[datetime] = None  # set by the poller; for offline detection
+    last_status: Optional[str] = None  # cached normalized status JSON (poller, later phase)
 
 
 class Photo(SQLModel, table=True):
@@ -160,3 +172,50 @@ class DashboardLayout(SQLModel, table=True):
     tank_id: int = Field(foreign_key="tanks.id", primary_key=True)
     widgets: str = "[]"  # JSON array of {id, type, options}
     updated_at: datetime = Field(default_factory=utcnow)
+
+
+class ChecklistTemplate(SQLModel, table=True):
+    """A reusable maintenance procedure (e.g. "Water Change") — the ordered steps
+    you follow when you do it. Distinct from a Task (a reminder that it's *due*);
+    a Task may link to a template so a due reminder can launch the procedure.
+    """
+    __tablename__ = "checklist_templates"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    tank_id: int = Field(foreign_key="tanks.id", index=True)
+    name: str
+    category: str = ""  # "" or reuse task CATEGORIES
+    description: str = ""
+    active: bool = True  # deactivate-not-delete, like the rest of the app
+    updated_at: datetime = Field(default_factory=utcnow)
+
+
+class ChecklistStep(SQLModel, table=True):
+    """One ordered step of a template. A real child table (not JSON) because the
+    editor reorders/edits steps individually and `position` ordering reads cleanly.
+    """
+    __tablename__ = "checklist_steps"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    template_id: int = Field(foreign_key="checklist_templates.id", index=True)
+    position: int = 0
+    text: str
+    detail: str = ""
+    kind: str = "note"  # note | wait | input | critical (only "note" used in Phase A)
+    config: str = "{}"  # JSON blob for kind-specific config (Phase C)
+
+
+class ChecklistRun(SQLModel, table=True):
+    """One walk-through of a template. Records start/finish + per-step state, which
+    is what makes a checklist more than a static note (history, "what's still off").
+
+    `state` is a JSON blob (per-step done flags / captured values / notes), same
+    rationale as DashboardLayout.widgets — it's read and written whole.
+    """
+    __tablename__ = "checklist_runs"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    template_id: int = Field(foreign_key="checklist_templates.id", index=True)
+    tank_id: int = Field(foreign_key="tanks.id", index=True)
+    task_id: Optional[int] = Field(default=None, foreign_key="tasks.id")  # Phase B link
+    started_at: datetime = Field(default_factory=utcnow)
+    completed_at: Optional[datetime] = None
+    status: str = "in_progress"  # in_progress | completed | abandoned
+    state: str = "{}"

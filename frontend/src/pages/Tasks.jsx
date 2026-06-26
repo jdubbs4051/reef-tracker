@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Check, Plus } from '../icons.jsx'
+import { useEffect, useState } from 'react'
+import { Check, Plus, Clipboard } from '../icons.jsx'
 import { useTank } from '../TankContext.jsx'
 import { api, CADENCES, CATEGORIES, dueInfo } from '../api.js'
 
@@ -15,9 +15,9 @@ function dueStyle(info, done) {
   return { color: 'var(--ink2)', background: 'var(--card2)' }
 }
 
-const BLANK = { name: '', category: 'maintenance', recurrence_rule: 'weekly' }
+const BLANK = { name: '', category: 'maintenance', recurrence_rule: 'weekly', checklist_template_id: '' }
 
-export default function Tasks() {
+export default function Tasks({ onNavigate }) {
   const { tank, tasks, loading, error, refreshTasks } = useTank()
   const [filter, setFilter] = useState('all')
   const [busy, setBusy] = useState(false)
@@ -25,6 +25,14 @@ export default function Tasks() {
   const [justDone, setJustDone] = useState({})
   const [adding, setAdding] = useState(false)
   const [form, setForm] = useState(BLANK)
+  const [templates, setTemplates] = useState([]) // checklist templates available to link
+
+  useEffect(() => {
+    if (!tank) return
+    let cancelled = false
+    api.listChecklists(tank.id).then((t) => { if (!cancelled) setTemplates(t) }).catch(() => {})
+    return () => { cancelled = true }
+  }, [tank])
 
   async function toggleDone(t) {
     setBusy(true)
@@ -51,12 +59,40 @@ export default function Tasks() {
     if (!tank || !form.name.trim()) return
     setBusy(true)
     try {
-      await api.createTask({ tank_id: tank.id, ...form, name: form.name.trim() })
+      await api.createTask({
+        tank_id: tank.id,
+        name: form.name.trim(),
+        category: form.category,
+        recurrence_rule: form.recurrence_rule,
+        checklist_template_id: form.checklist_template_id ? Number(form.checklist_template_id) : null,
+      })
       setForm(BLANK)
       setAdding(false)
       await refreshTasks()
     } finally {
       setBusy(false)
+    }
+  }
+
+  // Link a task to a checklist template ('' clears the link).
+  async function changeTemplate(t, value) {
+    setBusy(true)
+    try {
+      await api.updateTask(t.id, { checklist_template_id: value ? Number(value) : null })
+      await refreshTasks()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  // Start a run of the task's linked procedure, then open it on the Checklists page.
+  async function runFromTask(t) {
+    setBusy(true)
+    try {
+      const run = await api.startRun(t.checklist_template_id, t.id)
+      onNavigate?.('checklists', { runId: run.id })
+    } catch (e) {
+      setBusy(false) // stay put on error; otherwise we've navigated away
     }
   }
 
@@ -121,6 +157,25 @@ export default function Tasks() {
                 <div className={`task-name${done ? ' done' : ''}`}>{t.name}</div>
                 <div className="task-meta">{t.category}</div>
               </div>
+              {t.checklist_template_id ? (
+                <button className="run-btn" disabled={busy} onClick={() => runFromTask(t)} title="Run the linked procedure">
+                  <Clipboard size={13} /> Run
+                </button>
+              ) : null}
+              <select
+                className="recur-select"
+                value={t.checklist_template_id || ''}
+                disabled={busy}
+                onChange={(e) => changeTemplate(t, e.target.value)}
+                title="Link a checklist procedure"
+              >
+                <option value="">No checklist</option>
+                {templates.map((tpl) => (
+                  <option key={tpl.id} value={tpl.id}>
+                    {tpl.name}
+                  </option>
+                ))}
+              </select>
               <select
                 className="recur-select"
                 value={CADENCES.includes(t.recurrence_rule) ? t.recurrence_rule : 'as needed'}
@@ -167,6 +222,21 @@ export default function Tasks() {
                 </option>
               ))}
             </select>
+            {templates.length ? (
+              <select
+                className="recur-select"
+                value={form.checklist_template_id}
+                onChange={(e) => setForm((f) => ({ ...f, checklist_template_id: e.target.value }))}
+                title="Link a checklist procedure"
+              >
+                <option value="">No checklist</option>
+                {templates.map((tpl) => (
+                  <option key={tpl.id} value={tpl.id}>
+                    {tpl.name}
+                  </option>
+                ))}
+              </select>
+            ) : null}
             <button className="link-btn" style={{ color: 'var(--teal)' }} disabled={busy || !form.name.trim()} onClick={createTask}>
               Add
             </button>

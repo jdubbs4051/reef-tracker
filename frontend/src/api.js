@@ -59,6 +59,23 @@ export const api = {
   createEquipment: (body) => req('/equipment', { method: 'POST', body: JSON.stringify(body) }),
   updateEquipment: (id, body) => req(`/equipment/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
   deleteEquipment: (id) => req(`/equipment/${id}`, { method: 'DELETE' }),
+  equipmentStatus: (id) => req(`/equipment/${id}/status`),
+
+  // Checklists (Phase A) — templates (reusable procedures) + runs (one walk-through).
+  listChecklists: (tankId, includeInactive = false) =>
+    req(`/checklists?tank_id=${tankId}&include_inactive=${includeInactive}`),
+  createChecklist: (body) => req('/checklists', { method: 'POST', body: JSON.stringify(body) }),
+  getChecklist: (id) => req(`/checklists/${id}`),
+  updateChecklist: (id, body) => req(`/checklists/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  deleteChecklist: (id) => req(`/checklists/${id}`, { method: 'DELETE' }),
+  startRun: (templateId, taskId) =>
+    req(`/checklists/${templateId}/runs${taskId ? `?task_id=${taskId}` : ''}`, { method: 'POST' }),
+  getRun: (runId) => req(`/checklists/runs/${runId}`),
+  updateRunState: (runId, state) =>
+    req(`/checklists/runs/${runId}`, { method: 'PATCH', body: JSON.stringify({ state }) }),
+  completeRun: (runId) => req(`/checklists/runs/${runId}/complete`, { method: 'POST' }),
+  listRuns: (tankId, status) =>
+    req(`/checklists/runs?tank_id=${tankId}${status ? `&status=${status}` : ''}`),
 
   listJournal: (tankId) => req(`/journal?tank_id=${tankId}`),
   createJournal: (body) => req('/journal', { method: 'POST', body: JSON.stringify(body) }),
@@ -91,8 +108,32 @@ export const EQUIPMENT_TYPES = [
   'Other',
 ]
 
+// Red Sea ReefBeat device integrations (mirror backend schemas.EQUIPMENT_INTEGRATIONS).
+// Empty `value` = static equipment (no live status). Labels drive the form dropdown.
+export const EQUIPMENT_INTEGRATIONS = [
+  { value: '', label: 'None — static equipment' },
+  { value: 'reefbeat_led', label: 'Red Sea ReefLED' },
+  { value: 'reefbeat_ato', label: 'Red Sea ReefATO+' },
+  { value: 'reefbeat_wave', label: 'Red Sea ReefWave' },
+  { value: 'reefbeat_dose', label: 'Red Sea ReefDose' },
+]
+
 // Task categories offered when creating a task (drive the icon + iCal category).
 export const CATEGORIES = ['water', 'testing', 'filtration', 'media', 'maintenance']
+
+// Checklist step kinds (mirror backend schemas.CHECKLIST_STEP_KINDS).
+export const CHECKLIST_STEP_KINDS = ['note', 'wait', 'input', 'critical']
+
+// Editor-facing labels for each step kind.
+export const STEP_KIND_LABELS = {
+  note: 'Note',
+  wait: 'Wait / precondition',
+  input: 'Capture a value',
+  critical: 'Critical (turn back ON)',
+}
+
+// Checklist categories offered in the editor (task categories + livestock).
+export const CHECKLIST_CATEGORIES = ['water', 'testing', 'filtration', 'media', 'maintenance', 'livestock']
 
 // Cadences offered in the Tasks editor (mirror backend recurrence.CADENCES).
 export const CADENCES = ['daily', 'weekly', 'biweekly', 'monthly', 'as needed']

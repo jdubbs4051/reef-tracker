@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
 from ..database import DATA_DIR, get_session
+from ..integrations import poller, reefbeat
 from ..models import Equipment, Photo
 from ..schemas import EquipmentCreate, EquipmentRead, EquipmentUpdate
 
@@ -32,6 +33,10 @@ def _to_read(session: Session, eq: Equipment) -> EquipmentRead:
         notes=eq.notes,
         active=eq.active,
         photo_url=_photo_url_for(session, eq.id),
+        host=eq.host,
+        integration=eq.integration,
+        viz_enabled=eq.viz_enabled,
+        last_seen=eq.last_seen,
     )
 
 
@@ -68,6 +73,47 @@ def update_equipment(equipment_id: int, body: EquipmentUpdate, session: Session 
     session.commit()
     session.refresh(eq)
     return _to_read(session, eq)
+
+
+@router.get("/{equipment_id}/status")
+async def equipment_status(equipment_id: int, session: Session = Depends(get_session)):
+    """Live, read-only status for an integrated device (plan §4.3).
+
+    Served from the background poller's cache (fast, outage-tolerant); on a cache
+    miss (e.g. right after startup) it polls live once and caches the result.
+
+    Always returns 200 with a small status dict so the UI can render gracefully:
+    - static gear (no integration)  → ``{"integration": null}``
+    - live visualization turned off → ``{"viz_enabled": false}``
+    - integration not yet supported → ``{"supported": false}``
+    - missing host                  → ``{"online": false, "needs_host": true}``
+    - otherwise → normalized status with ``online``, ``last_seen``, ``checked_at``.
+    """
+    eq = session.get(Equipment, equipment_id)
+    if not eq:
+        raise HTTPException(status_code=404, detail="Equipment not found")
+
+    if not eq.integration:
+        return {"integration": None}
+    if not eq.viz_enabled:
+        return {"integration": eq.integration, "viz_enabled": False}
+    if not reefbeat.is_supported(eq.integration):
+        return {"integration": eq.integration, "supported": False}
+    if not eq.host:
+        return {"integration": eq.integration, "online": False, "needs_host": True}
+
+    entry = poller.get_cached(eq.id)
+    if entry is None:
+        # Cache miss — poll once now and fold into the cache.
+        client = reefbeat.client_for(eq.integration, eq.host)
+        entry = poller.update_cache(eq, await client.poll(), session)
+
+    status = dict(entry["status"] or {})
+    status["integration"] = eq.integration
+    status["online"] = entry["online"]
+    status["last_seen"] = entry["last_seen"]
+    status["checked_at"] = entry["checked_at"]
+    return status
 
 
 @router.delete("/{equipment_id}", status_code=204)

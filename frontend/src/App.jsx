@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard.jsx'
 import ParameterTracking from './pages/ParameterTracking.jsx'
 import Parameters from './pages/Parameters.jsx'
 import Tasks from './pages/Tasks.jsx'
+import Checklists from './pages/Checklists.jsx'
 import Livestock from './pages/Livestock.jsx'
 import Journal from './pages/Journal.jsx'
 import Equipment from './pages/Equipment.jsx'
@@ -27,6 +28,7 @@ const PAGES = {
   charts: { title: 'Historic Trends', subtitle: 'Trends over time.', el: Parameters },
   settings: { title: 'Settings', subtitle: 'Parameters, notifications & data.', el: Settings },
   tasks: { title: 'Tasks', subtitle: 'Mark done — recurrence handles the rest.', el: Tasks },
+  checklists: { title: 'Checklists', subtitle: 'Step-by-step procedures — follow along, nothing gets skipped.', el: Checklists },
   livestock: { title: 'Livestock', subtitle: 'Who lives here — with honest stocking notes.', el: Livestock },
   journal: { title: 'Journal', subtitle: 'A dated log of what happened in the tank.', el: Journal },
   equipment: { title: 'Equipment', subtitle: 'The gear running your tank — brand, model & notes.', el: Equipment },
@@ -36,9 +38,17 @@ const PAGES = {
 export default function App() {
   const [theme, setTheme] = useTheme()
   const [active, setActive] = useState('home')
+  const [navArg, setNavArg] = useState(null) // optional payload for the target page (e.g. { runId })
   const [logOpen, setLogOpen] = useState(false)
   const [logBump, setLogBump] = useState(0) // bumped after a save so views refetch
   const [navOpen, setNavOpen] = useState(false) // mobile nav drawer
+
+  // Navigate, optionally handing the destination page a one-shot argument.
+  const navigate = (id, arg = null) => {
+    setActive(id)
+    setNavArg(arg)
+    setNavOpen(false)
+  }
 
   const page = PAGES[active] || PAGES.home
   const Page = page.el
@@ -50,10 +60,7 @@ export default function App() {
           active={active}
           open={navOpen}
           onClose={() => setNavOpen(false)}
-          onNavigate={(id) => {
-            setActive(id)
-            setNavOpen(false)
-          }}
+          onNavigate={(id) => navigate(id)}
         />
         <main className="main">
           <TopBar
@@ -64,7 +71,7 @@ export default function App() {
             onLog={() => setLogOpen(true)}
             onMenu={() => setNavOpen(true)}
           />
-          <Page screen={active} onNavigate={setActive} logBump={logBump} />
+          <Page screen={active} onNavigate={navigate} navArg={navArg} logBump={logBump} />
         </main>
       </div>
 

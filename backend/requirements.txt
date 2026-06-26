@@ -4,3 +4,4 @@ sqlmodel==0.0.22
 apscheduler==3.11.0
 python-dateutil==2.9.0.post0
 python-multipart==0.0.20
+httpx==0.28.1

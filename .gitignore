@@ -19,6 +19,7 @@ venv/
 __pycache__/
 *.pyc
 
-# Runtime data (database + uploaded photos)
+# Runtime data (database + uploaded photos + auto-backups)
 backend/data/reef.db
 backend/data/photos/
+backend/data/backups/

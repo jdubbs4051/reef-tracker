@@ -13,7 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session
 
+from .backup import backup_db
 from .database import DATA_DIR, create_db_and_tables, engine
+from .migrations import run_migrations
 from .notifications import (
     calendar_url,
     email_configured,
@@ -23,7 +25,7 @@ from .notifications import (
     send_ntfy,
     set_setting,
 )
-from .routers import activity, calendar, dashboard, equipment, journal, livestock, parameters, photos, readings, tanks, tasks
+from .routers import activity, calendar, checklists, dashboard, equipment, journal, livestock, parameters, photos, readings, tanks, tasks
 from .schemas import (
     NotificationSettings,
     NotificationSettingsUpdate,
@@ -31,17 +33,25 @@ from .schemas import (
     NotificationTestResult,
 )
 from .scheduler import start_scheduler, stop_scheduler
-from .seed import seed_if_empty
+from .seed import seed_checklists_if_empty, seed_if_empty
 
 # Surface our INFO logs (scheduler ticks, notification sends/skips) alongside uvicorn's.
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
+log = logging.getLogger("reef.main")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
+    create_db_and_tables()  # creates any missing tables (incl. the 3 checklist tables)
+    backup_db()             # snapshot BEFORE altering anything
     with Session(engine) as session:
+        try:
+            run_migrations(session)  # add new columns on existing tables, bump version
+        except Exception:
+            log.exception("migration failed — DB snapshot is in data/backups/ for recovery")
+            raise
         seed_if_empty(session)
+        seed_checklists_if_empty(session)
     start_scheduler()
     yield
     stop_scheduler()
@@ -70,11 +80,21 @@ app.include_router(journal.router)
 app.include_router(photos.router)
 app.include_router(calendar.router)
 app.include_router(dashboard.router)
+app.include_router(checklists.router)
 
 
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+@app.post("/api/admin/backup")
+def manual_backup():
+    """Trigger an on-demand DB snapshot (also surfaced as 'Back up now' in Settings)."""
+    dest = backup_db()
+    if dest is None:
+        return {"ok": False, "detail": "Nothing to back up yet."}
+    return {"ok": True, "detail": f"Saved {dest.name}", "path": dest.name}
 
 
 @app.get("/api/notifications/status", response_model=NotificationStatus)

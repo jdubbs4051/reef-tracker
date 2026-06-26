@@ -1,7 +1,59 @@
 # Equipment Integration Plan — Red Sea ReefBeat (read-only visibility)
 
 **Owner:** Jonathan
-**Status:** Planning. Not yet built.
+**Status:** **Phases 1–7 shipped (2026-06-24)** — fields/form + ReefBeat client +
+status endpoint + poller/cache + Equipment-page cards + dashboard widget, for LED +
+ATO + ReefWave + ReefDose (all four device types). Next (optional): discovery,
+ReefWave cloud, event→notification hooks. See §7/§8.
+- **1** — additive `Equipment` fields (`host`, `integration`, `viz_enabled`, plus
+  `last_seen`/`last_status` for later phases), migration v2→v3 (idempotent per-column
+  ALTER, guarded), `EQUIPMENT_INTEGRATIONS` constant (backend + frontend mirror),
+  schema/router plumbing, and the equipment add/edit form (integration dropdown →
+  reveals device-address + "show live status" toggle). No live polling yet.
+- **2** — `integrations/reefbeat.py` (ported from the HA component, MIT, attributed):
+  defensive `ReefbeatDevice` base + `ReefLed`/`ReefAto` returning normalized status;
+  concurrent source fetch so an offline device costs ~one 5s timeout. `httpx` added.
+  `GET /api/equipment/{id}/status` (on-demand poll) handles static / viz-off /
+  unsupported / missing-host / offline / online cases, always 200. No frontend yet
+  (status cards are Phase 4); no caching/`last_seen` writes (Phase 3).
+- **3** — `integrations/poller.py`: in-memory status cache + APScheduler job
+  (`device_poll`, every `REEF_DEVICE_POLL_INTERVAL`, default 45s) polling all active,
+  viz-enabled, supported, addressable devices concurrently. First run fires via
+  `next_run_time` (worker thread — it uses `asyncio.run`, so never inline from the
+  async lifespan). Online polls cache + persist `last_status`/`last_seen`; offline
+  polls freeze last-known values, hold `last_seen`, advance `checked_at`. Status
+  endpoint now serves the cache (live-poll fallback on miss) and seeds last-known
+  from the DB row so frozen values survive a restart. Verified: online → offline →
+  restart all behave per §4.5 States.
+- **4** — frontend `components/DeviceCard.jsx` (SVG hero ring gauge + stat rows +
+  status pill + online/offline dot; amber LED / blue ATO accents) and a "Live status"
+  section on the Equipment page rendering a card per integrated device; static gear
+  keeps its plain grouped row. Card refetches every 30s; `api.equipmentStatus(id)`
+  added. Render states verified in-browser: online, offline (greyed + frozen + "last
+  seen…"), viz-off slim ("live status off"), static. **Deferred from §4.5:** the
+  click-through detail page (24h history chart) — the card's "Edit" opens the existing
+  modal for now; build the detail page if/when the history view is wanted.
+- **5** — dashboard `equipment-status` widget (§4.7B): added to backend `WIDGET_TYPES`
+  + frontend `WIDGET_META`, wide-by-default. `DeviceCard` gained a `compact` mini-card
+  variant (small gauge + headline + pill + dot, click-through to the Equipment page),
+  reusing the same fetch/normalize/state logic. Widget shows only active, integrated,
+  viz-enabled devices. Verified in-browser: picker add flow, two online mini-cards,
+  click-through navigation, no console errors.
+- **6** — `ReefWave` client (§7.6, local-only/partial — wave programs live in the
+  cloud). Base client refactored to be device-info-path-agnostic (wave serves info at
+  "/") and to mark offline only when *all* sources fail. Normalizes the first `/auto`
+  interval → pump `fti`/`rti`, `type`, `direction`, with a `limited` flag. Teal accent
+  card + "limited · no cloud" pill (honest about local-only state); wave is now
+  `is_supported`. Verified against a mock RSWAVE25 (client assertions + in-browser card).
+- **7** — `ReefDose` client (§7.7): fetches `/dashboard` (per-head `daily_dose`,
+  `auto_dosed_today`/`manual_dosed_today`, `remaining_days`, `state`) + `/head/1..4/
+  settings` (supplement), handling 2- or 4-head devices and dict/list head shapes.
+  Normalizes to a `heads` list. Frontend: purple accent + a **multi-head card** —
+  2×2 grid of per-head rings (% of today's dose), supplement name, dosed/daily ml,
+  days-left (red when < 7), with an "on schedule / low container / paused" pill. The
+  doser breaks the single-hero pattern (plan §4.5). `DoseHead` component + `--purple`
+  token (light/dark). Verified against a mock RSDOSE4 (client assertions + in-browser
+  4-head card showing the low-container warning).
 **Goal:** Surface live status of connected Red Sea devices inside Reef Tracker by
 polling them locally over the LAN — read-only, advisory, no control.
 

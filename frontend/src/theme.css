@@ -19,6 +19,8 @@
   --blueS: #dcedf6;
   --amber: #bd8526;
   --amberS: #f4ead0;
+  --purple: #7a5bc2;
+  --purpleS: #e9e2f6;
 
   --mono: "IBM Plex Mono", ui-monospace, monospace;
   --sans: "Plus Jakarta Sans", system-ui, sans-serif;
@@ -40,6 +42,8 @@
   --blueS: #123141;
   --amber: #eab863;
   --amberS: #2f2614;
+  --purple: #b59ae8;
+  --purpleS: #271f3d;
 }
 
 * {
@@ -1479,4 +1483,653 @@ body {
   .content {
     padding: 16px;
   }
+}
+
+/* ============================================================
+   Checklists (Phase A)
+   ============================================================ */
+.empty {
+  font-size: 12.5px;
+  color: var(--ink3);
+  text-align: center;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 11px;
+}
+.cl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+.cl-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cl-card-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.cl-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.cl-desc {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.cl-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* Resume in-progress runs */
+.cl-resume {
+  margin-bottom: 18px;
+}
+.cl-resume-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: var(--blueS);
+  color: var(--blue);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 13px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+/* Editor */
+.cl-editor {
+  max-width: 760px;
+}
+.cl-edit-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.cl-edit-row .mini-input.name {
+  flex: 1;
+  width: auto;
+}
+.cl-steps-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 18px 0 8px;
+}
+.cl-step-edit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cl-step-edit {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 11px;
+}
+.cl-step-edit .mini-input,
+.cl-detail-input,
+.cl-note-input {
+  width: 100%;
+  font-family: var(--sans);
+}
+.cl-detail-input {
+  font-size: 12px;
+  color: var(--ink2);
+}
+.cl-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: var(--card2);
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 800;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+.cl-step-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cl-editor-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.cl-editor-foot .save-btn {
+  width: auto;
+  margin-top: 12px;
+  padding: 11px 20px;
+}
+
+/* Run view */
+.cl-run {
+  max-width: 680px;
+}
+.cl-run-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.cl-run-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.cl-done-banner {
+  background: var(--tealS);
+  color: var(--teal);
+  border-radius: 11px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.cl-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cl-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 13px;
+}
+.cl-step.done {
+  opacity: 0.62;
+}
+.cl-step-text {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.cl-step-text.done {
+  text-decoration: line-through;
+}
+.cl-step-i {
+  color: var(--ink3);
+  font-weight: 800;
+}
+.cl-step-detail {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.5;
+  margin-top: 3px;
+  text-wrap: pretty;
+}
+.cl-note-input {
+  margin-top: 7px;
+}
+
+/* Run button on task rows (link a procedure -> Run) */
+.run-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--blue);
+  background: var(--blueS);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 11px;
+  cursor: pointer;
+}
+.run-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Guided one-step run mode */
+.cl-guided {
+  max-width: 560px;
+}
+.cl-guided-progress {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink3);
+  margin-bottom: 8px;
+}
+.cl-guided-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+}
+.cl-guided-card.done {
+  border-color: var(--teal);
+}
+.task-check.big {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border-width: 2.5px;
+  margin: 0 auto 14px;
+}
+.cl-guided-text {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.cl-guided-detail {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.55;
+  margin-top: 8px;
+  text-wrap: pretty;
+}
+.cl-guided-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+.cl-guided-primary {
+  width: auto;
+  flex: 1;
+  margin-top: 0;
+}
+
+/* Dashboard checklists widget */
+.cl-w-resume {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.cl-w-resume-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  background: var(--blueS);
+  color: var(--blue);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cl-w-launch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+/* ---- Phase C: smart step kinds + safety ---- */
+
+/* Kind badges shown next to step text */
+.cl-badge {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 1px 7px;
+  border-radius: 999px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.cl-badge.critical { color: var(--coral); background: var(--coralS); }
+.cl-badge.wait { color: var(--amber); background: var(--amberS); }
+.cl-badge.input { color: var(--blue); background: var(--blueS); }
+
+/* Critical steps get a coral left edge in both views */
+.cl-step.critical {
+  border-left: 3px solid var(--coral);
+}
+.cl-guided-card.critical {
+  border-color: var(--coral);
+}
+
+/* wait / input controls under a step */
+.cl-extra {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.cl-extra-hint {
+  font-size: 11px;
+  color: var(--ink3);
+}
+.cl-wait-status {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--amber);
+}
+.cl-wait-status.ready {
+  color: var(--teal);
+}
+
+/* editor kind selector row */
+.cl-kind-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cl-kind-select {
+  font-weight: 700;
+}
+.cl-kind-select.kind-critical { color: var(--coral); }
+.cl-kind-select.kind-wait { color: var(--amber); }
+.cl-kind-select.kind-input { color: var(--blue); }
+.cl-kind-cfg {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink2);
+}
+
+/* critical-undone safety warnings */
+.cl-safety-warn,
+.cl-w-warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: var(--coralS);
+  color: var(--coral);
+  border: 1px solid var(--coral);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  cursor: pointer;
+}
+.cl-safety-warn { margin-bottom: 12px; }
+.cl-w-warn {
+  font-size: 11.5px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.cl-safety-icon {
+  font-size: 15px;
+  line-height: 1.2;
+  flex: none;
+}
+
+/* ReefBeat device live-status cards (EQUIPMENT_INTEGRATION_PLAN §4.5) */
+.dev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+.dev-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  overflow: hidden;
+}
+.dev-card-off {
+  opacity: 0.78;
+}
+.dev-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.dev-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dev-head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dev-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.dev-model {
+  font-size: 10.5px;
+  color: var(--ink3);
+  margin-top: 1px;
+}
+.dev-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+.dev-dot.on {
+  background: var(--teal);
+  box-shadow: 0 0 0 3px var(--tealS);
+}
+.dev-dot.off {
+  background: var(--coral);
+  box-shadow: 0 0 0 3px var(--coralS);
+}
+.dev-edit {
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  background: var(--card2);
+  border: none;
+  border-radius: 7px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.dev-edit:hover {
+  color: var(--ink);
+}
+.dev-gauge {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  margin: 12px auto 10px;
+}
+.dev-gauge-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dev-gauge-val {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.dev-gauge-sub {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-top: 1px;
+}
+.dev-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 2px;
+}
+.dev-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 11.5px;
+}
+.dev-stat-k {
+  color: var(--ink3);
+}
+.dev-stat-v {
+  color: var(--ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dev-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+}
+.dev-pill {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+.dev-pill.on {
+  color: var(--teal);
+  background: var(--tealS);
+}
+.dev-pill.off {
+  color: var(--coral);
+  background: var(--coralS);
+}
+.dev-seen {
+  font-size: 10px;
+  color: var(--ink3);
+}
+.dev-slim-note {
+  font-size: 11.5px;
+  color: var(--ink3);
+  padding: 10px 0 2px;
+}
+.dev-card-slim {
+  padding-bottom: 12px;
+}
+
+/* Compact dashboard "Equipment status" strip (§4.7B) */
+.dev-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.dev-mini {
+  flex: 1 1 130px;
+  min-width: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--accent, var(--line));
+  border-radius: 12px;
+  padding: 10px 10px 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.dev-mini:hover {
+  border-color: var(--ink3);
+}
+.dev-mini-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
+}
+.dev-mini-title {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dev-mini-note {
+  font-size: 11px;
+  color: var(--ink3);
+  height: 68px;
+  display: flex;
+  align-items: center;
+}
+.dev-gauge-val.sm {
+  font-size: 15px;
+}
+
+/* ReefDose multi-head card (plan §4.5): 2×2 grid of per-head rings */
+.dose-heads {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0 4px;
+}
+.dose-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+.dose-head .dev-gauge {
+  margin: 0 0 4px;
+}
+.dose-head-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dose-head-ml {
+  font-size: 10.5px;
+  color: var(--ink2);
+  font-variant-numeric: tabular-nums;
+}
+.dose-head-days {
+  font-size: 9.5px;
+  color: var(--ink3);
 }

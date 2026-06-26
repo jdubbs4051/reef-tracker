@@ -77,6 +77,7 @@ class TaskCreate(BaseModel):
     recurrence_rule: str = "weekly"
     notify_channels: str = "email,ntfy"
     next_due_at: Optional[datetime] = None  # defaults to now + one cadence
+    checklist_template_id: Optional[int] = None  # optional linked procedure (Phase B)
 
 
 class TaskUpdate(BaseModel):
@@ -86,6 +87,8 @@ class TaskUpdate(BaseModel):
     notify_channels: Optional[str] = None
     next_due_at: Optional[datetime] = None
     active: Optional[bool] = None
+    # Send an id to link; send null to clear it (omit to leave unchanged).
+    checklist_template_id: Optional[int] = None
 
 
 class TaskComplete(BaseModel):
@@ -195,6 +198,17 @@ EQUIPMENT_TYPES = [
 ]
 
 
+# Red Sea ReefBeat device integrations (EQUIPMENT_INTEGRATION_PLAN §4.1). A null/""
+# integration means static equipment (no live polling) — today's behavior.
+# (mirror on the frontend in api.js)
+EQUIPMENT_INTEGRATIONS = [
+    "reefbeat_led",
+    "reefbeat_ato",
+    "reefbeat_wave",
+    "reefbeat_dose",
+]
+
+
 class EquipmentCreate(BaseModel):
     tank_id: int
     type: str = "Other"
@@ -204,6 +218,9 @@ class EquipmentCreate(BaseModel):
     installed_at: Optional[datetime] = None
     notes: str = ""
     active: bool = True
+    host: Optional[str] = None
+    integration: Optional[str] = None
+    viz_enabled: bool = True
 
 
 class EquipmentUpdate(BaseModel):
@@ -214,6 +231,9 @@ class EquipmentUpdate(BaseModel):
     installed_at: Optional[datetime] = None
     notes: Optional[str] = None
     active: Optional[bool] = None
+    host: Optional[str] = None
+    integration: Optional[str] = None
+    viz_enabled: Optional[bool] = None
 
 
 class EquipmentRead(BaseModel):
@@ -227,6 +247,10 @@ class EquipmentRead(BaseModel):
     notes: str
     active: bool
     photo_url: Optional[str] = None
+    host: Optional[str] = None
+    integration: Optional[str] = None
+    viz_enabled: bool = True
+    last_seen: Optional[datetime] = None
 
 
 # ---- Dashboard widgets (Phase 4.4) ----
@@ -239,6 +263,8 @@ WIDGET_TYPES = [
     "calendar",       # task due-date calendar (CHANGE_REQUESTS.md #4)
     "insight",
     "activity",
+    "checklists",       # quick-launch templates + resume in-progress runs (Phase B)
+    "equipment-status", # compact ReefBeat device strip (EQUIPMENT_INTEGRATION_PLAN §4.7B)
 ]
 
 
@@ -255,6 +281,75 @@ class DashboardLayoutRead(BaseModel):
 
 class DashboardLayoutUpdate(BaseModel):
     widgets: List[WidgetConfig]
+
+
+# ---- Checklists (Phase A) ----
+# Step kinds. Phase A ships "note" only; wait/input/critical land in Phase C.
+# (mirror on the frontend in api.js)
+CHECKLIST_STEP_KINDS = ["note", "wait", "input", "critical"]
+
+
+class ChecklistStepIn(BaseModel):
+    """One step as sent by the editor. `position` is ignored on input — the server
+    rewrites it from the array index so reordering is just sending a new order."""
+    text: str
+    detail: str = ""
+    kind: str = "note"
+    config: Dict[str, Any] = Field(default_factory=dict)
+
+
+class ChecklistStepRead(BaseModel):
+    id: int
+    position: int
+    text: str
+    detail: str
+    kind: str
+    config: Dict[str, Any]
+
+
+class ChecklistTemplateCreate(BaseModel):
+    tank_id: int
+    name: str
+    category: str = ""
+    description: str = ""
+    steps: List[ChecklistStepIn] = Field(default_factory=list)
+
+
+class ChecklistTemplateUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    # When provided, replaces the whole step list (positions rewritten from index).
+    steps: Optional[List[ChecklistStepIn]] = None
+
+
+class ChecklistTemplateRead(BaseModel):
+    id: int
+    tank_id: int
+    name: str
+    category: str
+    description: str
+    active: bool
+    steps: List[ChecklistStepRead]
+
+
+class ChecklistRunRead(BaseModel):
+    id: int
+    template_id: int
+    tank_id: int
+    task_id: Optional[int]
+    started_at: datetime
+    completed_at: Optional[datetime]
+    status: str
+    state: Dict[str, Any]
+    # Echo the template name + steps so the run view has everything in one call.
+    template_name: str
+    steps: List[ChecklistStepRead]
+
+
+class RunStateUpdate(BaseModel):
+    """Whole-blob update of a run's state (per-step done flags / values / notes)."""
+    state: Dict[str, Any]
 
 
 # ---- Journal (Phase 3) ----

@@ -1,7 +1,20 @@
 # Reef Tracker — Maintenance Checklists Plan
 
 **Captured:** 2026-06-24 · **Owner:** Jonathan
-**Status:** Planning notes — not started. Implement in a later session.
+**Status:** **Phases A + B + C shipped (2026-06-24).**
+- **A** — migration runner + auto-backup, 3 tables + `Task.checklist_template_id`, template
+  CRUD (note steps), persisted check-off runs, standalone Checklists page, 5 seed procedures.
+- **B** — guided one-step run mode (⇄ compact), task↔template linking with a "Run" action on
+  the Tasks page (completing a linked run reschedules the task + writes a `TaskLog`), a
+  `checklist` activity-feed item, and the addable dashboard widget (quick-launch + resume).
+- **C** — smart step kinds: `wait` (per-run timer → "ready ✓ / ~Xh to go"), `input` (captures
+  to readings/journal on finish), `critical` (flagged). Critical-undone safety warning on the
+  Checklists page + dashboard widget, plus an hourly scheduler **nudge** for runs left open past
+  `REEF_RUN_NUDGE_HOURS` (default 6) with criticals unchecked. Water Change seed enriched with
+  these kinds (and applied to the existing template).
+
+**Deferred polish (from §8 Phase C):** duplicate-template-to-another-tank (multi-tank is unused
+today) and drag-and-drop step reorder (up/down already works). Pick these up if/when needed.
 
 A customizable, reusable checklist feature for maintenance procedures (water change,
 filter swap, skimmer clean, etc.). The defining example: a **Water Change** procedure

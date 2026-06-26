@@ -6,6 +6,7 @@ export const nav = [
   { id: 'log', label: 'Parameter Tracking', icon: 'drop' },
   { id: 'charts', label: 'Historic Trends', icon: 'chart' },
   { id: 'tasks', label: 'Tasks', icon: 'list' },
+  { id: 'checklists', label: 'Checklists', icon: 'clipboard' },
   { id: 'livestock', label: 'Livestock', icon: 'grid' },
   { id: 'journal', label: 'Journal', icon: 'book' },
   { id: 'equipment', label: 'Equipment', icon: 'wrench' },
