@@ -91,15 +91,24 @@
 
 ## 🚀 Quick start
 
-### Docker (production-style, one service)
+### 🐳 Pull from Docker Hub (fastest)
+
+The image is published at [`blackbird4051/reef-tracker`](https://hub.docker.com/r/blackbird4051/reef-tracker) (multi-arch: `amd64` + `arm64`):
 
 ```bash
-docker compose up --build
+docker run -d -p 8000:8000 -v reef-data:/data blackbird4051/reef-tracker:latest
 # open http://localhost:8000  (or http://<lan-ip>:8000 from your phone)
 ```
 
 The SQLite file and uploaded photos live in the `reef-data` named volume —
 **back up by copying that volume.** 💾
+
+### Build it yourself (production-style, one service)
+
+```bash
+docker compose up --build
+# open http://localhost:8000
+```
 
 ### Local dev (two processes)
 
